@@ -566,7 +566,7 @@ body.light .contact p{color:#5d6473 !important}
     <button class="filter" data-filter="gaming">Game</button>
   </div>
   <div class="grid" id="templateGrid">
-    <article class="card" data-cat="personal" data-href="porto.html?v=2026-08-18.1" tabindex="0" role="link" aria-label="Open Simple Portfolio demo">
+    <article class="card" data-cat="personal" data-href="porto.html" tabindex="0" role="link" aria-label="Open Simple Portfolio demo">
       <div class="preview purple">
         <div class="preview-inner">
           <div class="mini-nav">PORTFOLIO <span>ABOUT · WORK · CONTACT</span></div>
@@ -580,7 +580,7 @@ body.light .contact p{color:#5d6473 !important}
       <div class="card-body">
         <div class="card-top"><h3>Simple Portfolio</h3><span class="tag">Personal</span></div>
         <p class="desc">Clean portfolio for developers, designers and professionals.</p>
-        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="porto.html?v=2026-08-18.1">View demo ↗</a></div>
+        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="porto.html">View demo ↗</a></div>
       </div>
     </article>
 
@@ -602,7 +602,7 @@ body.light .contact p{color:#5d6473 !important}
       </div>
     </article>
 
-    <article class="card" data-cat="personal" data-href="cewe_achievement_above_comments.html?v=2026-08-18.1" tabindex="0" role="link" aria-label="Open Girl Page demo">
+    <article class="card" data-cat="personal" data-href="cewe_achievement_above_comments.html" tabindex="0" role="link" aria-label="Open Girl Page demo">
       <div class="preview pink">
         <div class="preview-inner">
           <div class="mini-nav">MOCHI <span>PROFILE · MUSIC · SOCIAL</span></div>
@@ -616,7 +616,7 @@ body.light .contact p{color:#5d6473 !important}
       <div class="card-body">
         <div class="card-top"><h3>Girl Page</h3><span class="tag">Personal</span></div>
         <p class="desc">Cute personal page for profiles, music, interests and social links.</p>
-        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="cewe_achievement_above_comments.html?v=2026-08-18.1">View demo ↗</a></div>
+        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="cewe_achievement_above_comments.html">View demo ↗</a></div>
       </div>
     </article>
 
@@ -705,6 +705,17 @@ body.light .contact p{color:#5d6473 !important}
 <script>
 const filters=document.querySelectorAll(".filter");
 const cards=document.querySelectorAll(".card");
+const appVersion=document.querySelector('meta[name="app-version"]')?.content || "";
+
+function withAppVersion(url){
+  if(!appVersion || !url || url.startsWith("#") || /^(https?:)?\/\//.test(url)) return url;
+  const separator=url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${encodeURIComponent(appVersion)}`;
+}
+
+document.querySelectorAll('a[href$=".html"]').forEach(link=>{
+  link.href=withAppVersion(link.getAttribute("href"));
+});
 
 filters.forEach(btn=>btn.addEventListener("click",()=>{
   filters.forEach(x=>x.classList.remove("active"));
@@ -716,12 +727,12 @@ filters.forEach(btn=>btn.addEventListener("click",()=>{
 document.querySelectorAll(".card[data-href]").forEach(card=>{
   card.addEventListener("click",event=>{
     if(event.target.closest("a,button")) return;
-    window.location.href=card.dataset.href;
+    window.location.href=withAppVersion(card.dataset.href);
   });
   card.addEventListener("keydown",event=>{
     if(event.key!=="Enter"&&event.key!==" ") return;
     event.preventDefault();
-    window.location.href=card.dataset.href;
+    window.location.href=withAppVersion(card.dataset.href);
   });
 });
 
