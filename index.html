@@ -318,7 +318,8 @@ h2{font:600 clamp(2rem,4vw,3.3rem)/1 "Space Grotesk";letter-spacing:-.05em}
 
 /* CARDS */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.card{background:linear-gradient(145deg,#12151d,#0d0f14);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.25s}
+.card{background:linear-gradient(145deg,#12151d,#0d0f14);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.25s;cursor:default}
+.card[data-href]{cursor:pointer}
 .card:hover{transform:translateY(-5px);border-color:#454a5b;box-shadow:0 25px 70px rgba(0,0,0,.28)}
 .preview{height:220px;padding:15px;background:#171a23;position:relative;overflow:hidden}
 .preview-inner{height:100%;border-radius:13px;background:#f3f3ef;color:#111;overflow:hidden;border:1px solid rgba(0,0,0,.12);position:relative}
@@ -561,7 +562,7 @@ body.light .contact p{color:#5d6473 !important}
     <button class="filter" data-filter="gaming">Game</button>
   </div>
   <div class="grid" id="templateGrid">
-    <article class="card" data-cat="personal">
+    <article class="card" data-cat="personal" data-href="porto.html" tabindex="0" role="link" aria-label="Open Simple Portfolio demo">
       <div class="preview purple">
         <div class="preview-inner">
           <div class="mini-nav">PORTFOLIO <span>ABOUT · WORK · CONTACT</span></div>
@@ -575,7 +576,7 @@ body.light .contact p{color:#5d6473 !important}
       <div class="card-body">
         <div class="card-top"><h3>Simple Portfolio</h3><span class="tag">Personal</span></div>
         <p class="desc">Clean portfolio for developers, designers and professionals.</p>
-        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="#contact">Get template ↗</a></div>
+        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="porto.html">View demo ↗</a></div>
       </div>
     </article>
 
@@ -597,7 +598,7 @@ body.light .contact p{color:#5d6473 !important}
       </div>
     </article>
 
-    <article class="card" data-cat="personal">
+    <article class="card" data-cat="personal" data-href="cewe_achievement_above_comments.html" tabindex="0" role="link" aria-label="Open Girl Page demo">
       <div class="preview pink">
         <div class="preview-inner">
           <div class="mini-nav">MOCHI <span>PROFILE · MUSIC · SOCIAL</span></div>
@@ -611,7 +612,7 @@ body.light .contact p{color:#5d6473 !important}
       <div class="card-body">
         <div class="card-top"><h3>Girl Page</h3><span class="tag">Personal</span></div>
         <p class="desc">Cute personal page for profiles, music, interests and social links.</p>
-        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="#contact">Get template ↗</a></div>
+        <div class="card-foot"><span class="card-price">Rp15K</span><a class="demo" href="cewe_achievement_above_comments.html">View demo ↗</a></div>
       </div>
     </article>
 
@@ -707,6 +708,19 @@ filters.forEach(btn=>btn.addEventListener("click",()=>{
   const f=btn.dataset.filter;
   cards.forEach(c=>c.style.display=f==="all"||c.dataset.cat===f?"":"none");
 }));
+
+document.querySelectorAll(".card[data-href]").forEach(card=>{
+  card.addEventListener("click",event=>{
+    if(event.target.closest("a,button")) return;
+    window.location.href=card.dataset.href;
+  });
+  card.addEventListener("keydown",event=>{
+    if(event.key!=="Enter"&&event.key!==" ") return;
+    event.preventDefault();
+    window.location.href=card.dataset.href;
+  });
+});
+
 
 document.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{
   btn.parentElement.querySelectorAll(".choice").forEach(x=>x.classList.remove("active"));
