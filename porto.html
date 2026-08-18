@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark" data-lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura — Immersive Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-deep: #08090c;
+      --bg-ambient: #0f1219;
+      --nav-bg: rgba(8, 9, 12, 0.75);
+      --border-glow: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --gold-accent: #d4af37;
+      --gold-glow: rgba(212, 175, 55, 0.2);
+      --surface-btn: rgba(255, 255, 255, 0.03);
+      --surface-hover: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="light"] {
+      --bg-deep: #f5f5f7;
+      --bg-ambient: #ebebf0;
+      --nav-bg: rgba(245, 245, 247, 0.82);
+      --border-glow: rgba(0, 0, 0, 0.09);
+      --border-hover: rgba(0, 0, 0, 0.25);
+      --text-main: #11141a;
+      --text-muted: #64748b;
+      --gold-accent: #b8860b;
+      --gold-glow: rgba(184, 134, 11, 0.2);
+      --surface-btn: rgba(0, 0, 0, 0.04);
+      --surface-hover: rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Fixed Glass Top Bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glow);
+      z-index: 90;
+      display: flex;
+      justify-content: center;
+      padding: 0 24px;
+    }
+
+    .topbar-container {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand-logo span {
+      color: var(--gold-accent);
+    }
+
+    .nav-desktop-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--gold-accent);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-top-action {
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-top-action:hover {
+      background: var(--surface-hover);
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+    }
+
+    .btn-hamburger {
+      display: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    /* Mobile Sliding Drawer & Overlay */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 98;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 260px;
+      height: 100vh;
+      background: var(--bg-deep);
+      border-left: 1px solid var(--border-glow);
+      z-index: 99;
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-glow);
+      padding-bottom: 16px;
+    }
+
+    .drawer-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .drawer-nav-link {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .drawer-nav-link:hover {
+      color: var(--gold-accent);
+    }
+
+    /* Ambient Background Light Streams */
+    .ambient-glow {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(15, 18, 25, 0) 70%);
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    [data-theme="light"] .ambient-glow {
+      background: radial-gradient(circle, rgba(184, 134, 11, 0.06) 0%, rgba(245, 245, 247, 0) 70%);
+    }
+
+    .ambient-glow-bottom {
+      position: fixed;
+      bottom: -10%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.04) 0%, rgba(15, 18, 25, 0) 70%);
+      filter: blur(100px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .site-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 24px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 90px;
+    }
+
+    /* 1. Head Foto & Monumental Hero */
+    .grand-hero {
+      min-height: 75vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding-top: 20px;
+    }
+
+    .avatar-epic-container {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .avatar-epic {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--border-glow);
+    }
+
+    .monumental-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, var(--text-main) 40%, rgba(128,128,128,0.4) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .monumental-subtitle {
+      font-size: 1.1rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    /* 2. Structured Self-Profile Grid */
+    .profile-grid-section {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .profile-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+    }
+
+    .profile-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .entry-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .entry-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .entry-text strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .pill-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .badge-subtle {
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      border-radius: 999px;
+      color: var(--text-main);
+    }
+
+    /* 3. Pro-Grade Modern Audio Command Console */
+    .soundscape-wrapper {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .pro-player-console {
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .pro-player-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .pro-track-identity {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .pro-cover-box {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .pro-cover-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .pro-cover-box.playing img {
+      transform: scale(1.08);
+    }
+
+    .pro-track-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: hidden;
+    }
+
+    .pro-track-details .track-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.01em;
+    }
+
+    .pro-track-details .track-artist {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .pro-spectrum-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 18px;
+      margin-top: 2px;
+    }
+
+    .pro-spectrum-bars span {
+      width: 2.5px;
+      height: 20%;
+      background: var(--gold-accent);
+      border-radius: 2px;
+      transition: height 0.15s ease;
+    }
+
+    /* Player Controls */
+    .pro-player-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .btn-pro-ctrl {
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      color: var(--text-muted);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-pro-ctrl:hover {
+      color: var(--text-main);
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-pro-play {
+      background: var(--gold-accent);
+      color: #08090c;
+      border: none;
+      width: 50px;
+      height: 50px;
+      font-size: 1.15rem;
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    [data-theme="light"] .btn-pro-play {
+      color: #ffffff;
+    }
+
+    .btn-pro-play:hover {
+      filter: brightness(1.1);
+      transform: scale(1.06);
+    }
+
+    /* Volume Console */
+    .pro-volume-panel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 8px;
+      border-left: 1px solid var(--border-glow);
+    }
+
+    .vol-icon {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 18px;
+      transition: color 0.2s ease;
+    }
+
+    .vol-icon:hover {
+      color: var(--gold-accent);
+    }
+
+    .vol-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 70px;
+      height: 4px;
+      background: var(--border-hover);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold-accent);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    /* Scrubber & Timeline */
+    .pro-timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scrubber-track {
+      position: relative;
+      height: 6px;
+      width: 100%;
+      background: var(--surface-hover);
+      border-radius: 999px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: height 0.2s ease;
+    }
+
+    .scrubber-track:hover {
+      height: 8px;
+    }
+
+    .scrubber-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--gold-accent);
+      border-radius: 999px;
+      pointer-events: none;
+      transition: width 0.1s linear;
+    }
+
+    .time-indicators {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* 4. Grand Visual Showcase (Cinematic Gallery) */
+    .gallery-section-grand {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .gallery-showcase-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-auto-rows: 320px;
+      gap: 16px;
+    }
+
+    .gallery-cell {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border-glow);
+    }
+
+    .gallery-cell.wide {
+      grid-column: span 2;
+    }
+
+    .gallery-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+    }
+
+    .gallery-cell:hover img {
+      transform: scale(1.04);
+      filter: brightness(1.05);
+    }
+
+    .gallery-cell-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.85) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-cell:hover .gallery-cell-overlay {
+      opacity: 1;
+    }
+
+    .gallery-caption {
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    /* 5. Monumental Social Links */
+    .social-section-grand {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .social-grand-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .social-grand-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 110px;
+      padding: 18px;
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .social-grand-btn i {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+    }
+
+    .social-grand-btn span {
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+    }
+
+    .social-grand-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--gold-accent);
+      transform: translateY(-4px);
+    }
+
+    .social-grand-btn:hover i,
+    .social-grand-btn:hover span {
+      color: var(--gold-accent);
+    }
+
+    /* 6. Selected Works Showcase */
+    .works-section-grand {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .works-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .work-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 24px 28px;
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .work-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      transform: translateX(6px);
+    }
+
+    .work-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .work-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .work-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+    }
+
+    .work-year {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--gold-accent);
+    }
+
+    .work-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      max-width: 650px;
+    }
+
+    .work-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid var(--border-glow);
+      border-radius: 999px;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .work-link-btn:hover {
+      background: var(--gold-accent);
+      color: #ffffff;
+      border-color: var(--gold-accent);
+    }
+
+    /* 7. Direct Transmission / Inquiry */
+    .inquiry-section-grand {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 50px;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 60px;
+    }
+
+    .inquiry-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .inquiry-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: var(--surface-btn);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      padding: 14px 18px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--gold-accent);
+      background: var(--surface-hover);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .btn-submit {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: var(--gold-accent);
+      color: #08090c;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    [data-theme="light"] .btn-submit {
+      color: #ffffff;
+    }
+
+    .btn-submit:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    /* 8. Grand Architectural Footer */
+    .grand-footer {
+      border-top: 1px solid var(--border-glow);
+      padding-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* Lightbox Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-backdrop.active {
+      display: grid;
+    }
+
+    .modal-img-expanded {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border: 1px solid var(--border-glow);
+    }
+
+    /* ==========================================================================
+       RESPONSIVE ADAPTATIONS
+       ========================================================================== */
+
+    @media (min-width: 901px) {
+      .avatar-epic-container {
+        margin-bottom: 48px;
+      }
+      .monumental-subtitle {
+        margin-bottom: 22px;
+        letter-spacing: 0.35em;
+      }
+      .monumental-title {
+        letter-spacing: 0.12em;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav-desktop-links {
+        display: none;
+      }
+      .btn-hamburger {
+        display: inline-flex;
+      }
+      .profile-columns, .inquiry-section-grand {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .pro-player-main {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .pro-player-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .pro-volume-panel {
+        border-left: none;
+        padding-left: 0;
+      }
+      .gallery-showcase-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 240px;
+      }
+      .gallery-cell.wide {
+        grid-column: span 1;
+      }
+      .social-grand-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-height: 540px) and (orientation: landscape) {
+      .grand-hero {
+        min-height: auto;
+        padding: 50px 0;
+      }
+      .gallery-showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="topbar">
+    <div class="topbar-container">
+      <a href="#" class="brand-logo">AURA<span>.</span></a>
+      
+      <div class="nav-desktop-links">
+        <a href="#aboutSection" class="nav-link" data-i18n="nav_about">Profil</a>
+        <a href="#audioSection" class="nav-link" data-i18n="nav_audio">Audio</a>
+        <a href="#visualSection" class="nav-link" data-i18n="nav_visuals">Visual</a>
+        <a href="#worksSection" class="nav-link" data-i18n="nav_works">Karya</a>
+        <a href="#contactSection" class="nav-link" data-i18n="nav_contact">Kontak</a>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Language Switcher -->
+        <button class="btn-top-action" id="langToggle" aria-label="Toggle Language">
+          <i class="fa-solid fa-globe"></i>
+          <span id="langLabel">EN</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="btn-top-action" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-sun" id="themeIcon"></i>
+        </button>
+
+        <!-- Hamburger Menu (Mobile) -->
+        <button class="btn-top-action btn-hamburger" id="menuToggle" aria-label="Open Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+      <span class="brand-logo">MENU</span>
+      <button class="btn-top-action btn-hamburger" id="drawerClose" style="display: inline-flex;" aria-label="Close Navigation">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="drawer-nav-list">
+      <a href="#aboutSection" class="drawer-nav-link" data-i18n="nav_about">Profil</a>
+      <a href="#audioSection" class="drawer-nav-link" data-i18n="nav_audio">Audio</a>
+      <a href="#visualSection" class="drawer-nav-link" data-i18n="nav_visuals">Visual</a>
+      <a href="#worksSection" class="drawer-nav-link" data-i18n="nav_works">Karya</a>
+      <a href="#contactSection" class="drawer-nav-link" data-i18n="nav_contact">Kontak</a>
+    </div>
+  </aside>
+
+  <div class="ambient-glow"></div>
+  <div class="ambient-glow-bottom"></div>
+
+  <div class="site-wrapper">
+
+    <!-- 1. Head Foto & Monumental Hero -->
+    <header class="grand-hero">
+      <div class="avatar-epic-container">
+        <img class="avatar-epic" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80" alt="Identity Head">
+      </div>
+      <div class="monumental-subtitle" data-i18n="hero_subtitle">Independent Creator & Visual Curator</div>
+      <h1 class="monumental-title">ALEX RIVERA</h1>
+    </header>
+
+    <!-- 2. Structured Self Profile & Disciplines -->
+    <section class="profile-grid-section" id="aboutSection">
+      <div class="section-label" data-i18n="sec_profile">Profile & Perspectives</div>
+      
+      <div class="profile-columns">
+        <div class="profile-entry">
+          <div class="entry-tag"><i class="fa-solid fa-palette"></i> <span data-i18n="tag_focus">Creative Focus</span></div>
+          <div class="entry-text" data-i18n="desc_focus">
+            Mengeksplorasi produksi visual bernuansa gelap, komposisi audio atmosferik, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.
+          </div>
+        </div>
+
+        <div class="profile-entry">
+          <div class="entry-tag"><i class="fa-solid fa-compass"></i> <span data-i18n="tag_story">Background & Story</span></div>
+          <div class="entry-text" data-i18n="desc_story">
+            Semua berawal dari ketertarikan pada fotografi jalanan dan rekaman audio analog. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta soundscape tematik</strong> yang siap dinikmati audiens.
+          </div>
+        </div>
+
+        <div class="profile-entry">
+          <div class="entry-tag"><i class="fa-solid fa-sliders"></i> <span data-i18n="tag_arsenal">Creative Arsenal</span></div>
+          <div class="entry-text" data-i18n="desc_arsenal">
+            Perangkat keras dan aplikasi utama yang menemani setiap sesi produksi kreatif:
+          </div>
+          <div class="pill-stack">
+            <span class="badge-subtle">Sony Alpha Series</span>
+            <span class="badge-subtle">Ableton Live</span>
+            <span class="badge-subtle">DaVinci Resolve</span>
+            <span class="badge-subtle">Lightroom Classic</span>
+            <span class="badge-subtle">Mechanical Setup</span>
+          </div>
+        </div>
+
+        <div class="profile-entry">
+          <div class="entry-tag"><i class="fa-solid fa-record-vinyl"></i> <span data-i18n="tag_tastes">Influences & Tastes</span></div>
+          <div class="entry-text" data-i18n="desc_tastes">
+            Inspirasi berkarya banyak dipengaruhi oleh <strong>musik ambient lo-fi, sinematografi noir, kopi seduh manual, dan arsitektur minimalis</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Pro-Grade Modern Audio Player Console -->
+    <section class="soundscape-wrapper" id="audioSection">
+      <div class="section-label" data-i18n="sec_audio">Acoustic Moodboard</div>
+      
+      <div class="pro-player-console">
+        <div class="pro-player-main">
+          
+          <div class="pro-track-identity">
+            <div class="pro-cover-box" id="trackCover">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80" alt="Album Cover">
+            </div>
+            <div class="pro-track-details">
+              <div class="track-title" id="trackTitle">Midnight Horizon</div>
+              <div class="track-artist" id="trackArtist">Original Soundtrack • Session Zero</div>
+              <div class="pro-spectrum-bars" id="audioPulse">
+                <span style="height: 30%"></span>
+                <span style="height: 60%"></span>
+                <span style="height: 100%"></span>
+                <span style="height: 45%"></span>
+                <span style="height: 80%"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pro-player-controls">
+            <button class="btn-pro-ctrl" id="prevBtn" aria-label="Previous Track"><i class="fa-solid fa-backward-step"></i></button>
+            <button class="btn-pro-ctrl btn-pro-play" id="playBtn" aria-label="Play / Pause"><i class="fa-solid fa-play" id="playIcon"></i></button>
+            <button class="btn-pro-ctrl" id="nextBtn" aria-label="Next Track"><i class="fa-solid fa-forward-step"></i></button>
+            
+            <div class="pro-volume-panel">
+              <i class="fa-solid fa-volume-high vol-icon" id="volumeIcon" title="Mute / Unmute"></i>
+              <input type="range" class="vol-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" aria-label="Volume">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pro-timeline-container">
+          <div class="scrubber-track" id="progressContainer">
+            <div class="scrubber-fill" id="progressBar"></div>
+          </div>
+          <div class="time-indicators">
+            <span id="currentTime">00:00</span>
+            <span id="totalDuration">00:00</span>
+          </div>
+        </div>
+      </div>
+
+      <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </section>
+
+    <!-- 4. Grand Visual Showcase -->
+    <section class="gallery-section-grand" id="visualSection">
+      <div class="section-label" data-i18n="sec_visuals">Curated Visuals</div>
+      <div class="gallery-showcase-grid">
+        <div class="gallery-cell wide" onclick="expandPhoto(this)">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1000&auto=format&fit=crop&q=80" alt="Visual I">
+          <div class="gallery-cell-overlay"><span class="gallery-caption">Frame 01 — Tokyo Monochrome</span></div>
+        </div>
+        <div class="gallery-cell" onclick="expandPhoto(this)">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80" alt="Visual II">
+          <div class="gallery-cell-overlay"><span class="gallery-caption">Frame 02 — Midnight Horizon</span></div>
+        </div>
+        <div class="gallery-cell" onclick="expandPhoto(this)">
+          <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&auto=format&fit=crop&q=80" alt="Visual III">
+          <div class="gallery-cell-overlay"><span class="gallery-caption">Frame 03 — Foggy Solitude</span></div>
+        </div>
+        <div class="gallery-cell wide" onclick="expandPhoto(this)">
+          <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1000&auto=format&fit=crop&q=80" alt="Visual IV">
+          <div class="gallery-cell-overlay"><span class="gallery-caption">Frame 04 — Studio Session</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Monumental Social Links -->
+    <section class="social-section-grand">
+      <div class="section-label" data-i18n="sec_socials">Social Channels</div>
+      <div class="social-grand-grid">
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
+          <i class="fa-brands fa-instagram"></i>
+          <span>Instagram</span>
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
+          <i class="fa-brands fa-x-twitter"></i>
+          <span data-i18n="soc_twitter">X / Thoughts</span>
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
+          <i class="fa-brands fa-youtube"></i>
+          <span data-i18n="soc_youtube">YouTube Channel</span>
+        </a>
+        <a href="https://spotify.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
+          <i class="fa-brands fa-spotify"></i>
+          <span data-i18n="soc_spotify">Spotify Playlists</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 6. Selected Works & Releases -->
+    <section class="works-section-grand" id="worksSection">
+      <div class="section-label" data-i18n="sec_works">Featured Releases</div>
+      <div class="works-list">
+        <div class="work-item">
+          <div class="work-info">
+            <div class="work-header">
+              <span class="work-title">Aura Visual Pack</span>
+              <span class="work-year">2026</span>
+            </div>
+            <p class="work-desc" data-i18n="desc_work1">Koleksi preset warna dan profil visual monokrom untuk fotografer jalanan dan kreator video independen.</p>
+          </div>
+          <a href="#" class="work-link-btn"><span data-i18n="btn_work1">View Asset</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
+
+        <div class="work-item">
+          <div class="work-info">
+            <div class="work-header">
+              <span class="work-title">Midnight Soundscapes</span>
+              <span class="work-year">2026</span>
+            </div>
+            <p class="work-desc" data-i18n="desc_work2">Kompilasi audio atmosferik 24-bit tanpa vokal yang dirancang khusus sebagai pengiring fokus kerja larut malam.</p>
+          </div>
+          <a href="#" class="work-link-btn"><span data-i18n="btn_work2">Listen Full</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Direct Transmission / Inquiry -->
+    <section class="inquiry-section-grand" id="contactSection">
+      <div class="inquiry-meta">
+        <div class="section-label" data-i18n="sec_contact">Direct Line</div>
+        <p style="font-size: 1rem; color: var(--text-muted); line-height: 1.7;" data-i18n="desc_contact">
+          Terbuka untuk kolaborasi proyek visual, lisensi audio latar, atau sekadar diskusi ide kreatif.
+        </p>
+      </div>
+      <form class="inquiry-form" id="contactForm" onsubmit="event.preventDefault(); alert(document.documentElement.getAttribute('data-lang') === 'id' ? 'Pesan Terkirim.' : 'Transmission Sent.');">
+        <div class="form-group">
+          <input type="text" class="form-input" id="formName" placeholder="Nama / Brand" required>
+        </div>
+        <div class="form-group">
+          <input type="email" class="form-input" id="formEmail" placeholder="Alamat Email" required>
+        </div>
+        <div class="form-group">
+          <textarea class="form-textarea" id="formMsg" placeholder="Pesan atau Penawaran Kolaborasi" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <span data-i18n="btn_send">Kirim Pesan</span>
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </section>
+
+    <!-- 8. Grand Architectural Footer -->
+    <footer class="grand-footer">
+      <div>© 2026 ALEX RIVERA. ALL RIGHTS RESERVED.</div>
+    </footer>
+
+  </div>
+
+  <!-- Modal Preview -->
+  <div class="modal-backdrop" id="photoModal" onclick="closePhoto()">
+    <img class="modal-img-expanded" id="modalTargetImg" src="" alt="Expanded View">
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. Language & Localization Engine
+    // ==========================================
+    const i18nData = {
+      id: {
+        nav_about: "Profil",
+        nav_audio: "Audio",
+        nav_visuals: "Visual",
+        nav_works: "Karya",
+        nav_contact: "Kontak",
+        hero_subtitle: "Independent Creator & Visual Curator",
+        sec_profile: "Profile & Perspectives",
+        tag_focus: "Creative Focus",
+        desc_focus: "Mengeksplorasi produksi visual bernuansa gelap, komposisi audio atmosferik, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.",
+        tag_story: "Background & Story",
+        desc_story: "Semua berawal dari ketertarikan pada fotografi jalanan dan rekaman audio analog. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta soundscape tematik</strong> yang siap dinikmati audiens.",
+        tag_arsenal: "Creative Arsenal",
+        desc_arsenal: "Perangkat keras dan aplikasi utama yang menemani setiap sesi produksi kreatif:",
+        tag_tastes: "Influences & Tastes",
+        desc_tastes: "Inspirasi berkarya banyak dipengaruhi oleh <strong>musik ambient lo-fi, sinematografi noir, kopi seduh manual, dan arsitektur minimalis</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.",
+        sec_audio: "Acoustic Moodboard",
+        sec_visuals: "Curated Visuals",
+        sec_socials: "Social Channels",
+        soc_twitter: "X / Thoughts",
+        soc_youtube: "YouTube Channel",
+        soc_spotify: "Spotify Playlists",
+        sec_works: "Featured Releases",
+        desc_work1: "Koleksi preset warna dan profil visual monokrom untuk fotografer jalanan dan kreator video independen.",
+        btn_work1: "View Asset",
+        desc_work2: "Kompilasi audio atmosferik 24-bit tanpa vokal yang dirancang khusus sebagai pengiring fokus kerja larut malam.",
+        btn_work2: "Listen Full",
+        sec_contact: "Direct Line",
+        desc_contact: "Terbuka untuk kolaborasi proyek visual, lisensi audio latar, atau sekadar diskusi ide kreatif.",
+        btn_send: "Kirim Pesan",
+        ph_name: "Nama / Brand",
+        ph_email: "Alamat Email",
+        ph_msg: "Pesan atau Penawaran Kolaborasi"
+      },
+      en: {
+        nav_about: "About",
+        nav_audio: "Sound",
+        nav_visuals: "Gallery",
+        nav_works: "Releases",
+        nav_contact: "Contact",
+        hero_subtitle: "Independent Creator & Visual Curator",
+        sec_profile: "Profile & Perspectives",
+        tag_focus: "Creative Focus",
+        desc_focus: "Exploring dark-toned visual production, atmospheric sound design, and interface curation. My priority is crafting <strong>works with a tranquil, refined, and distinct aesthetic</strong> devoid of excess clutter.",
+        tag_story: "Background & Story",
+        desc_story: "Originating from a genuine affinity for street photography and analog recording, I consistently develop <strong>visual palettes, custom color profiles, and thematic soundscapes</strong> made for creative exploration.",
+        tag_arsenal: "Creative Arsenal",
+        desc_arsenal: "Essential hardware and software driving my everyday creative productions:",
+        tag_tastes: "Influences & Tastes",
+        desc_tastes: "My creative output is shaped by <strong>ambient soundscapes, noir cinematography, manual brew coffee, and minimalist brutalism</strong>. These textures form the core of each release.",
+        sec_audio: "Acoustic Moodboard",
+        sec_visuals: "Curated Visuals",
+        sec_socials: "Social Channels",
+        soc_twitter: "X / Thoughts",
+        soc_youtube: "YouTube Channel",
+        soc_spotify: "Spotify Playlists",
+        sec_works: "Featured Releases",
+        desc_work1: "Curated monochrome color presets and visual LUTs tailored for street photographers and filmmakers.",
+        btn_work1: "View Asset",
+        desc_work2: "A 24-bit instrumental soundscape series crafted specifically for deep late-night focus sessions.",
+        btn_work2: "Listen Full",
+        sec_contact: "Direct Line",
+        desc_contact: "Open for visual collaborations, soundtrack licensing, or curated creative inquiries.",
+        btn_send: "Transmit Message",
+        ph_name: "Name / Organization",
+        ph_email: "Email Address",
+        ph_msg: "Project Inquiry or Message"
+      }
+    };
+
+    let currentLang = 'id';
+    const langToggle = document.getElementById('langToggle');
+    const langLabel = document.getElementById('langLabel');
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.setAttribute('data-lang', lang);
+      langLabel.textContent = lang === 'id' ? 'EN' : 'ID';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nData[lang][key]) {
+          el.innerHTML = i18nData[lang][key];
+        }
+      });
+
+      // Placeholders
+      document.getElementById('formName').placeholder = i18nData[lang].ph_name;
+      document.getElementById('formEmail').placeholder = i18nData[lang].ph_email;
+      document.getElementById('formMsg').placeholder = i18nData[lang].ph_msg;
+    }
+
+    langToggle.addEventListener('click', () => {
+      applyLanguage(currentLang === 'id' ? 'en' : 'id');
+    });
+
+    // ==========================================
+    // 2. Dark / Light Theme Engine
+    // ==========================================
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      themeIcon.className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    });
+
+    // ==========================================
+    // 3. Hamburger Mobile Drawer Engine
+    // ==========================================
+    const menuToggle = document.getElementById('menuToggle');
+    const drawerClose = document.getElementById('drawerClose');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+
+    function toggleDrawer(open) {
+      mobileDrawer.classList.toggle('active', open);
+      drawerOverlay.classList.toggle('active', open);
+    }
+
+    menuToggle.addEventListener('click', () => toggleDrawer(true));
+    drawerClose.addEventListener('click', () => toggleDrawer(false));
+    drawerOverlay.addEventListener('click', () => toggleDrawer(false));
+
+    document.querySelectorAll('.drawer-nav-link').forEach(link => {
+      link.addEventListener('click', () => toggleDrawer(false));
+    });
+
+    // ==========================================
+    // 4. Pro Audio Player Engine
+    // ==========================================
+    const playlist = [
+      {
+        title: "Midnight Horizon",
+        artist: "Original Soundtrack • Session Zero",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        cover: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"
+      },
+      {
+        title: "Celestial Resonance",
+        artist: "Horizon Lab • Lossless Master",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        cover: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=200&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    const audio = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const trackTitle = document.getElementById('trackTitle');
+    const trackArtist = document.getElementById('trackArtist');
+    const trackCover = document.getElementById('trackCover');
+    const progressBar = document.getElementById('progressBar');
+    const progressContainer = document.getElementById('progressContainer');
+    const currentTimeEl = document.getElementById('currentTime');
+    const totalDurationEl = document.getElementById('totalDuration');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeIcon = document.getElementById('volumeIcon');
+    const pulseBars = document.querySelectorAll('#audioPulse span');
+    let pulseInterval = null;
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "00:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      audio.src = track.src;
+      trackTitle.textContent = track.title;
+      trackArtist.textContent = track.artist;
+      trackCover.querySelector('img').src = track.cover;
+      progressBar.style.width = '0%';
+      currentTimeEl.textContent = '00:00';
+    }
+
+    function animateEqualizer(start) {
+      if (start) {
+        pulseInterval = setInterval(() => {
+          pulseBars.forEach(bar => {
+            bar.style.height = `${Math.floor(Math.random() * 85) + 15}%`;
+          });
+        }, 120);
+      } else {
+        clearInterval(pulseInterval);
+        pulseBars.forEach(bar => bar.style.height = '20%');
+      }
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        playIcon.classList.remove('fa-play');
+        playIcon.classList.add('fa-pause');
+        trackCover.classList.add('playing');
+        animateEqualizer(true);
+      } else {
+        audio.pause();
+        playIcon.classList.remove('fa-pause');
+        playIcon.classList.add('fa-play');
+        trackCover.classList.remove('playing');
+        animateEqualizer(false);
+      }
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+
+    prevBtn.addEventListener('click', () => {
+      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      trackCover.classList.add('playing');
+      animateEqualizer(true);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      trackCover.classList.add('playing');
+      animateEqualizer(true);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${percent}%`;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      totalDurationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      nextBtn.click();
+    });
+
+    // Scrubber click seek
+    progressContainer.addEventListener('click', (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      if (audio.duration) {
+        audio.currentTime = (clickX / width) * audio.duration;
+      }
+    });
+
+    // Volume Slider & Mute
+    volumeSlider.addEventListener('input', (e) => {
+      audio.volume = e.target.value;
+      updateVolumeIcon(audio.volume);
+    });
+
+    let prevVolume = 0.8;
+    volumeIcon.addEventListener('click', () => {
+      if (audio.volume > 0) {
+        prevVolume = audio.volume;
+        audio.volume = 0;
+        volumeSlider.value = 0;
+      } else {
+        audio.volume = prevVolume;
+        volumeSlider.value = prevVolume;
+      }
+      updateVolumeIcon(audio.volume);
+    });
+
+    function updateVolumeIcon(vol) {
+      volumeIcon.className = 'fa-solid vol-icon ' + 
+        (vol == 0 ? 'fa-volume-xmark' : (vol < 0.5 ? 'fa-volume-low' : 'fa-volume-high'));
+    }
+
+    // Modal Image Gallery
+    function expandPhoto(element) {
+      const src = element.querySelector('img').src;
+      document.getElementById('modalTargetImg').src = src;
+      document.getElementById('photoModal').classList.add('active');
+    }
+
+    function closePhoto() {
+      document.getElementById('photoModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

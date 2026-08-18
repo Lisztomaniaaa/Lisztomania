@@ -1,0 +1,2543 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="pink" data-lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mochi Mood — Clara's Cozy Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Three.js for Interactive 3D Cute Character -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --bg-canvas: #fff0f3;
+      --card-bg: #ffffff;
+      --main-pink: #ffb3c6;
+      --accent-pink: #ff758f;
+      --accent-yellow: #ffea79;
+      --accent-purple: #e2cbff;
+      --accent-green: #bbf7d0;
+      --accent-blue: #bae6fd;
+      --stroke: #2b2b2b;
+      --text-dark: #2b2b2b;
+      --text-muted: #6b6b6b;
+      --shadow-hard: 4px 4px 0px var(--stroke);
+      --shadow-hard-lg: 6px 6px 0px var(--stroke);
+      --shadow-hard-sm: 2px 2px 0px var(--stroke);
+      --radius-neo: 20px;
+      --radius-sm: 12px;
+    }
+
+    [data-theme="matcha"] {
+      --bg-canvas: #f0fdf4;
+      --main-pink: #bbf7d0;
+      --accent-pink: #86efac;
+      --accent-yellow: #fef08a;
+      --accent-purple: #fed7aa;
+      --accent-blue: #e0e7ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    h1, h2, h3, .sketch-font, .brand-logo {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: radial-gradient(rgba(43, 43, 43, 0.16) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+
+    /* Natural Scrolling Topbar */
+    .topbar {
+      position: relative;
+      margin: 20px auto 0;
+      width: calc(100% - 32px);
+      max-width: 1200px;
+      height: 64px;
+      background: var(--card-bg);
+      border: 3px solid var(--stroke);
+      border-radius: var(--radius-neo);
+      box-shadow: var(--shadow-hard);
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .brand-logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo span {
+      background: var(--main-pink);
+      padding: 2px 10px;
+      border: 2px solid var(--stroke);
+      border-radius: 8px;
+      transform: rotate(-3deg);
+    }
+
+    .nav-desktop-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      box-shadow: var(--shadow-hard-sm);
+      transform: translateY(-2px);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-neo-action {
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      color: var(--text-dark);
+      padding: 7px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.82rem;
+      box-shadow: var(--shadow-hard-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-neo-action:hover {
+      background: var(--accent-pink);
+      color: white;
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .btn-hamburger {
+      display: none;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Mobile Drawer */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 43, 43, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 98;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 280px;
+      height: 100vh;
+      background: var(--bg-canvas);
+      border-left: 3px solid var(--stroke);
+      z-index: 99;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px dashed var(--stroke);
+      padding-bottom: 14px;
+    }
+
+    .drawer-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drawer-nav-link {
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 700;
+      box-shadow: var(--shadow-hard-sm);
+    }
+
+    /* Main Container with Responsive Spacing */
+    .site-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 40px 24px 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    /* 1. Hero & Interactive 3D Character Canvas */
+    .hero-neobrutal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 10px 0 15px;
+    }
+
+    .character-3d-wrap {
+      position: relative;
+      width: 280px;
+      height: 250px;
+      margin-bottom: 16px;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .character-3d-wrap:active {
+      cursor: grabbing;
+    }
+
+    #pet3dCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 20px;
+    }
+
+    .sketch-sticker {
+      position: absolute;
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      box-shadow: var(--shadow-hard-sm);
+      user-select: none;
+      z-index: 5;
+    }
+
+    .sticker-mood {
+      top: 12px;
+      right: -15px;
+      transform: rotate(12deg);
+      background: var(--accent-pink);
+      color: white;
+    }
+
+    .sticker-sparkle {
+      bottom: 22px;
+      left: -20px;
+      transform: rotate(-10deg);
+      background: var(--accent-purple);
+    }
+
+    .hint-3d {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      padding: 3px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow-hard-sm);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.3rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-title-highlight {
+      background: var(--accent-yellow);
+      border: 3px solid var(--stroke);
+      padding: 2px 18px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-hard);
+      transform: rotate(1deg);
+    }
+
+    .hero-desc-badge {
+      background: var(--card-bg);
+      border: 2.5px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 14px 24px;
+      box-shadow: var(--shadow-hard-sm);
+      max-width: 620px;
+      margin: 4px auto 0;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    /* General Neobrutal Box Card */
+    .neo-card {
+      background: var(--card-bg);
+      border: 3px solid var(--stroke);
+      border-radius: var(--radius-neo);
+      box-shadow: var(--shadow-hard-lg);
+      padding: 32px;
+      position: relative;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-purple);
+      border: 2px solid var(--stroke);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-hard-sm);
+      margin-bottom: 22px;
+      transform: rotate(-1deg);
+    }
+
+    /* 2. Mood & Daily Sticky Notes */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .sticky-note {
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s;
+    }
+
+    .sticky-note:nth-child(1) { transform: rotate(-1.5deg); }
+    .sticky-note:nth-child(2) { background: var(--accent-purple); transform: rotate(1.2deg); }
+    .sticky-note:nth-child(3) { background: var(--main-pink); transform: rotate(-1deg); }
+
+    .sticky-note:hover {
+      transform: scale(1.03) rotate(0deg);
+    }
+
+    .note-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .note-text {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.55;
+    }
+
+    /* 3. Mabar Corner / Game Squad */
+    .mabar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .mabar-card {
+      background: var(--bg-canvas);
+      border: 2.5px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .mabar-card:hover {
+      background: var(--card-bg);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .game-logo-box {
+      width: 52px;
+      height: 52px;
+      border: 2.5px solid var(--stroke);
+      border-radius: 12px;
+      box-shadow: var(--shadow-hard-sm);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      padding: 6px;
+    }
+
+    .game-logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .mabar-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    .mabar-meta {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .btn-copy-id {
+      width: 100%;
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-copy-id:hover {
+      background: var(--accent-pink);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .btn-copy-id.copied {
+      background: var(--accent-green) !important;
+      color: var(--text-dark) !important;
+      border-color: var(--stroke);
+    }
+
+    /* 4. Spill Outfit & Wishlist Items (Bio Link Style) */
+    .spill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .spill-item {
+      background: var(--bg-canvas);
+      border: 2px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: var(--shadow-hard-sm);
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: all 0.15s ease;
+    }
+
+    .spill-item:hover {
+      background: var(--card-bg);
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .spill-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .spill-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .spill-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .spill-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* 5. Cassette Tape Audio Player */
+    .cassette-player {
+      background: var(--main-pink);
+      border: 3px solid var(--stroke);
+      border-radius: var(--radius-neo);
+      padding: 26px;
+      box-shadow: var(--shadow-hard);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .cassette-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tape-label {
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      border-radius: 12px;
+      padding: 12px 18px;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .spinning-tape {
+      width: 46px;
+      height: 46px;
+      background: var(--accent-yellow);
+      border: 2px solid var(--stroke);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .spinning-tape.playing {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .track-name-neo {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .track-artist-neo {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .cassette-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-neo-ctrl {
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-hard-sm);
+      transition: all 0.15s;
+    }
+
+    .btn-neo-ctrl:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .btn-neo-play {
+      background: var(--accent-yellow);
+      width: 50px;
+      height: 50px;
+      font-size: 1.25rem;
+    }
+
+    .scrubber-neo-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scrubber-track-neo {
+      height: 12px;
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scrubber-fill-neo {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent-pink);
+    }
+
+    .time-neo {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* 6. Polaroid Gallery Grid */
+    .polaroid-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .polaroid-item {
+      background: var(--card-bg);
+      border: 3px solid var(--stroke);
+      border-radius: 16px;
+      padding: 14px 14px 26px;
+      box-shadow: var(--shadow-hard);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .polaroid-item:nth-child(1) { transform: rotate(-2deg); }
+    .polaroid-item:nth-child(2) { transform: rotate(1deg); }
+    .polaroid-item:nth-child(3) { transform: rotate(-1.5deg); }
+
+    .polaroid-item:hover {
+      transform: scale(1.04) rotate(0deg);
+      z-index: 3;
+    }
+
+    .polaroid-img-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .polaroid-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .polaroid-caption {
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      color: var(--text-dark);
+    }
+
+    /* 7. Cute Social Links */
+    .social-neo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .social-neo-btn {
+      background: var(--card-bg);
+      border: 3px solid var(--stroke);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-dark);
+      box-shadow: var(--shadow-hard-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: all 0.15s ease;
+    }
+
+    .social-neo-btn i {
+      font-size: 1.7rem;
+    }
+
+    .social-neo-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hard);
+      background: var(--accent-yellow);
+    }
+
+    /* 8. Send Anonymous / Say Hi Letter Box & Live Feed */
+    .form-neo {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-neo, .textarea-neo {
+      width: 100%;
+      background: var(--bg-canvas);
+      border: 2px solid var(--stroke);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text-dark);
+      outline: none;
+      box-shadow: inset 2px 2px 0px rgba(0,0,0,0.05);
+    }
+
+    .input-neo:focus, .textarea-neo:focus {
+      background: var(--card-bg);
+      border-color: var(--accent-pink);
+    }
+
+    .textarea-neo {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn-neo-submit {
+      background: var(--accent-yellow);
+      border: 3px solid var(--stroke);
+      color: var(--text-dark);
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-hard);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      transition: all 0.15s ease;
+    }
+
+    .btn-neo-submit:hover {
+      background: var(--accent-pink);
+      color: white;
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-hard-lg);
+    }
+
+    .btn-neo-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Live Anonymous Letters Wall */
+    .live-letters-wrapper {
+      margin-top: 36px;
+      border-top: 2.5px dashed var(--stroke);
+      padding-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .live-letters-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .letters-feed-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .letter-card {
+      background: var(--bg-canvas);
+      border: 2.5px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .letter-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .letter-sender {
+      color: var(--accent-pink);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .letter-time {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .letter-content {
+      font-size: 0.92rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .letter-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-reply-letter {
+      background: var(--card-bg);
+      border: 1.5px solid var(--stroke);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 2px 2px 0px var(--stroke);
+      transition: all 0.15s;
+    }
+
+    .btn-reply-letter:hover {
+      background: var(--accent-yellow);
+      transform: translate(-1px, -1px);
+    }
+
+    /* Nested Replies List */
+    .replies-list-container {
+      margin-top: 6px;
+      padding-left: 16px;
+      border-left: 2px dashed var(--accent-pink);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .reply-card-mini {
+      background: var(--card-bg);
+      border: 1.5px solid var(--stroke);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      box-shadow: 2px 2px 0px var(--stroke);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .reply-sender {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 0.78rem;
+    }
+
+    .reply-time {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .reply-content {
+      color: var(--text-dark);
+      line-height: 1.45;
+    }
+
+    /* Load More Button */
+    .load-more-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .btn-load-more {
+      background: var(--card-bg);
+      border: 2px solid var(--stroke);
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-hard-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .btn-load-more:hover {
+      background: var(--accent-yellow);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .empty-letters-hint {
+      text-align: center;
+      padding: 24px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* 9. Footer */
+    .footer-neo {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      padding-top: 10px;
+    }
+
+    /* Lightbox Modal & Reply Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 43, 43, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .modal-backdrop.active {
+      display: grid;
+    }
+
+    .modal-polaroid-view {
+      background: var(--card-bg);
+      border: 4px solid var(--stroke);
+      border-radius: 16px;
+      padding: 18px 18px 30px;
+      box-shadow: 8px 8px 0px var(--stroke);
+      max-width: 90vw;
+      max-height: 85vh;
+    }
+
+    .modal-polaroid-view img {
+      max-width: 100%;
+      max-height: 70vh;
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .reply-modal-box {
+      background: var(--card-bg);
+      border: 3px solid var(--stroke);
+      border-radius: var(--radius-neo);
+      padding: 24px;
+      box-shadow: var(--shadow-hard-lg);
+      max-width: 460px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .reply-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+      border-bottom: 2px dashed var(--stroke);
+      padding-bottom: 10px;
+    }
+
+    .reply-target-preview {
+      background: var(--bg-canvas);
+      border: 1.5px solid var(--stroke);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      max-height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+
+    /* 9. Personal Achievement Showcase */
+    .achievement-intro {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: -8px 0 22px;
+    }
+
+    .personal-achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .personal-achievement {
+      background: var(--bg-canvas);
+      border: 2.5px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      box-shadow: var(--shadow-hard-sm);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .personal-achievement:hover {
+      transform: translate(-2px, -3px) rotate(-0.5deg);
+      box-shadow: var(--shadow-hard);
+      background: var(--card-bg);
+    }
+
+    .achievement-medal {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+      border: 2.5px solid var(--stroke);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 1.35rem;
+      box-shadow: var(--shadow-hard-sm);
+      background: var(--card-bg);
+    }
+
+    .medal-gold { background: var(--accent-yellow); }
+    .medal-pink { background: var(--main-pink); }
+    .medal-purple { background: var(--accent-purple); }
+    .medal-green { background: var(--accent-green); }
+    .medal-blue { background: var(--accent-blue); }
+    .medal-yellow { background: var(--accent-yellow); }
+
+    .achievement-year {
+      display: inline-block;
+      background: var(--card-bg);
+      border: 1.5px solid var(--stroke);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+      box-shadow: 2px 2px 0 var(--stroke);
+    }
+
+    .personal-achievement .achievement-name {
+      font-size: 0.98rem;
+      line-height: 1.3;
+      margin-bottom: 5px;
+    }
+
+    .personal-achievement .achievement-desc {
+      font-size: 0.77rem;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .personal-achievement-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .personal-achievement {
+        padding: 16px;
+      }
+    }
+
+    /* ==========================================================================
+       RESPONSIVE ADAPTATIONS & SPACING FIX
+       ========================================================================== */
+
+    /* 1920x1080 Full HD & Large Screens */
+    @media (min-width: 1400px) {
+      .site-wrapper {
+        max-width: 1200px;
+        gap: 56px;
+      }
+      .character-3d-wrap {
+        width: 320px;
+        height: 280px;
+      }
+      .neo-card {
+        padding: 38px;
+      }
+    }
+
+    /* Medium Displays & Tablets Landscape (901px - 1200px) */
+    @media (max-width: 1200px) and (min-width: 901px) {
+      .site-wrapper {
+        max-width: 980px;
+      }
+      .mabar-grid, .notes-grid, .polaroid-grid {
+        gap: 16px;
+      }
+    }
+
+    /* Tablets & Small Laptops (769px - 900px) */
+    @media (max-width: 900px) {
+      .mabar-grid { grid-template-columns: 1fr; }
+      .notes-grid { grid-template-columns: repeat(2, 1fr); }
+      .polaroid-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Mobile Portrait (< 768px) */
+    @media (max-width: 768px) {
+      .nav-desktop-links { display: none; }
+      .btn-hamburger { display: inline-flex; }
+      .site-wrapper {
+        padding: 30px 16px 60px;
+        gap: 36px;
+      }
+      .topbar {
+        width: calc(100% - 24px);
+        margin: 14px auto 0;
+        height: 58px;
+        padding: 0 16px;
+      }
+      .neo-card {
+        padding: 22px 18px;
+      }
+      .notes-grid, .spill-grid, .polaroid-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .social-neo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .character-3d-wrap {
+        width: 240px;
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar Navbar (Natural Scroll) -->
+  <nav class="topbar">
+    <a href="#" class="brand-logo">MOCHI<span>MOOD ✨</span></a>
+    
+    <div class="nav-desktop-links">
+      <a href="#aboutSection" class="nav-link" data-i18n="nav_about">Notes</a>
+      <a href="#gamesSection" class="nav-link" data-i18n="nav_games">Mabar 🎮</a>
+      <a href="#spillSection" class="nav-link" data-i18n="nav_spill">Spill Outfit</a>
+      <a href="#musicSection" class="nav-link" data-i18n="nav_music">Playlist</a>
+      <a href="#gallerySection" class="nav-link" data-i18n="nav_gallery">Polaroid</a>
+      <a href="#achievementSection" class="nav-link" data-i18n="nav_achievements">Achievement 🏆</a>
+      <a href="#contactSection" class="nav-link" data-i18n="nav_chat">Surat</a>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn-neo-action" id="langToggle" aria-label="Ganti Bahasa">
+        <i class="fa-solid fa-globe"></i>
+        <span id="langLabel">EN</span>
+      </button>
+
+      <button class="btn-neo-action" id="themeToggle" aria-label="Ganti Palet Warna">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </button>
+
+      <button class="btn-neo-action btn-hamburger" id="menuToggle" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Sliding Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+      <span class="brand-logo">MENU 🍡</span>
+      <button class="btn-neo-action btn-hamburger" id="drawerClose" style="display: inline-flex;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="drawer-nav-list">
+      <a href="#aboutSection" class="drawer-nav-link" data-i18n="nav_about">Notes</a>
+      <a href="#gamesSection" class="drawer-nav-link" data-i18n="nav_games">Mabar 🎮</a>
+      <a href="#spillSection" class="drawer-nav-link" data-i18n="nav_spill">Spill Outfit</a>
+      <a href="#musicSection" class="drawer-nav-link" data-i18n="nav_music">Playlist</a>
+      <a href="#gallerySection" class="drawer-nav-link" data-i18n="nav_gallery">Polaroid</a>
+      <a href="#achievementSection" class="drawer-nav-link" data-i18n="nav_achievements">Achievement 🏆</a>
+      <a href="#contactSection" class="drawer-nav-link" data-i18n="nav_chat">Kirim Surat</a>
+    </div>
+  </aside>
+
+  <div class="site-wrapper">
+
+    <!-- 1. Hero Section & Interactive 3D Cute Pet Character -->
+    <header class="hero-neobrutal">
+      <div class="character-3d-wrap" id="pet3dWrap" title="Puter atau sentuh aku!">
+        <span class="sketch-sticker sticker-mood">TOUCH ME! 🐾</span>
+        <span class="sketch-sticker sticker-sparkle">3D MOCHI ✨</span>
+        <canvas id="pet3dCanvas"></canvas>
+      </div>
+
+      <div class="hint-3d" data-i18n="hint_3d">👆 Drag buat muter • Tap/Klik biar senyum gemas!</div>
+      
+      <h1 class="hero-title">
+        <span>WELCOME TO</span>
+        <span class="hero-title-highlight">CLARA'S CORNER 🌸</span>
+      </h1>
+      
+      <!-- Anti-Nabrak Badge Box -->
+      <div class="hero-desc-badge" data-i18n="hero_sub">
+        Tempat kumpul diary kecil, cari temen mabar game seru, dengerin playlist lo-fi santai, dan spill racun belanja!
+      </div>
+    </header>
+
+    <!-- 2. Sticky Notes / Mood Diary -->
+    <section class="neo-card" id="aboutSection">
+      <div class="section-badge"><i class="fa-solid fa-sticky-note"></i> <span data-i18n="badge_notes">DAILY STICKY DIARY</span></div>
+      
+      <div class="notes-grid">
+        <div class="sticky-note">
+          <div class="note-tag">🧁 Current Craving</div>
+          <div class="note-text" data-i18n="note_1">Iced Caramel Macchiato + Croissant cokelat hangat pas lagi ngerjain tugas sore.</div>
+        </div>
+
+        <div class="sticky-note">
+          <div class="note-tag">📖 Currently Reading</div>
+          <div class="note-text" data-i18n="note_2">Buku self-healing santai tentang menikmati hal-hal kecil tanpa FOMO.</div>
+        </div>
+
+        <div class="sticky-note">
+          <div class="note-tag">✨ Today's Reminder</div>
+          <div class="note-text" data-i18n="note_3">Pelan-pelan aja, kamu udah berproses hebat kok hari ini. Don't be too hard on yourself!</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Mabar Corner / Game Lobby -->
+    <section class="neo-card" id="gamesSection">
+      <div class="section-badge" style="background: var(--accent-yellow);"><i class="fa-solid fa-gamepad"></i> <span data-i18n="badge_mabar">AYO MABAR BARENG! 🎮</span></div>
+      
+      <div class="mabar-grid">
+        <!-- Game 1: Roblox -->
+        <div class="mabar-card">
+          <div>
+            <div class="game-logo-box">
+              <img src="https://cdn.simpleicons.org/roblox/000000" alt="Roblox Logo">
+            </div>
+            <div class="mabar-title">Roblox</div>
+            <div class="mabar-meta">Dress to Impress • Blox Fruits • Tower of Hell • Obby</div>
+          </div>
+          <button class="btn-copy-id" onclick="copyGameId(this, 'ClaraCuteMochi#001')">
+            <i class="fa-regular fa-copy"></i> <span class="btn-label" data-i18n="btn_copy_roblox">Copy Username</span>
+          </button>
+        </div>
+
+        <!-- Game 2: Mobile Legends (SVG Vector Clean Logo) -->
+        <div class="mabar-card">
+          <div>
+            <div class="game-logo-box" style="background: #111827;">
+              <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none">
+                <path d="M12 2L3 6V11.5C3 16.8 6.8 21.7 12 23C17.2 21.7 21 16.8 21 11.5V6L12 2Z" fill="#2563EB" stroke="#FBBF24" stroke-width="1.5"/>
+                <path d="M12 5L14.2 9.5L19 10.2L15.5 13.6L16.3 18.5L12 16.2L7.7 18.5L8.5 13.6L5 10.2L9.8 9.5L12 5Z" fill="#FBBF24"/>
+                <path d="M8 12L12 15L16 12" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="mabar-title">Mobile Legends</div>
+            <div class="mabar-meta">Role: Support / Mage (Nana & Angela OTP) • Rank: Mythic</div>
+          </div>
+          <button class="btn-copy-id" onclick="copyGameId(this, '849201948 (2190)')">
+            <i class="fa-regular fa-copy"></i> <span class="btn-label" data-i18n="btn_copy_mlbb">Copy MLBB ID</span>
+          </button>
+        </div>
+
+        <!-- Game 3: GTA V / FiveM -->
+        <div class="mabar-card">
+          <div>
+            <div class="game-logo-box">
+              <img src="https://cdn.simpleicons.org/rockstargames/000000" alt="Rockstar GTA Logo">
+            </div>
+            <div class="mabar-title">GTA V / FiveM RP</div>
+            <div class="mabar-meta">Nongkrong santai, cruising kota Los Santos bareng bestie</div>
+          </div>
+          <button class="btn-copy-id" onclick="copyGameId(this, 'claravibes_#88')">
+            <i class="fa-brands fa-discord"></i> <span class="btn-label" data-i18n="btn_discord">Add on Discord</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Spill Outfit & Racun Belanja (Bio Link Section) -->
+    <section class="neo-card" id="spillSection">
+      <div class="section-badge" style="background: var(--accent-green);"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="badge_spill">FAVORITE STUFF & SPILL</span></div>
+      
+      <div class="spill-grid">
+        <a href="#" class="spill-item">
+          <div class="spill-left">
+            <div class="spill-icon">🧥</div>
+            <div>
+              <div class="spill-title">Oversized Cream Cardigan</div>
+              <div class="spill-desc">Bahan rajut adem ala korean look</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="color: var(--accent-pink);"></i>
+        </a>
+
+        <a href="#" class="spill-item">
+          <div class="spill-left">
+            <div class="spill-icon">🎀</div>
+            <div>
+              <div class="spill-title">Pastel Journaling Kit</div>
+              <div class="spill-desc">Washi tape, brush pen & cute stickers</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="color: var(--accent-pink);"></i>
+        </a>
+
+        <a href="#" class="spill-item">
+          <div class="spill-left">
+            <div class="spill-icon">🎧</div>
+            <div>
+              <div class="spill-title">Retro Beige Headphone</div>
+              <div class="spill-desc">Suara bass mantap + aesthetic dipakai OOTD</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="color: var(--accent-pink);"></i>
+        </a>
+
+        <a href="#" class="spill-item">
+          <div class="spill-left">
+            <div class="spill-icon">🍵</div>
+            <div>
+              <div class="spill-title">Ceremonial Grade Matcha Powder</div>
+              <div class="spill-desc">Racikan favorit bikin matcha latte di rumah</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="color: var(--accent-pink);"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- 5. Cassette Music Player -->
+    <section class="neo-card" id="musicSection">
+      <div class="section-badge" style="background: var(--main-pink);"><i class="fa-solid fa-compact-disc"></i> <span data-i18n="badge_player">CHILL CASSETTE</span></div>
+      
+      <div class="cassette-player">
+        <div class="cassette-top">
+          <div class="tape-label">
+            <div class="spinning-tape" id="tapeWheel"><i class="fa-solid fa-music"></i></div>
+            <div>
+              <div class="track-name-neo" id="trackTitle">Strawberry Sundae</div>
+              <div class="track-artist-neo" id="trackArtist">Pastel Beats • Lo-fi Girl Vibes</div>
+            </div>
+          </div>
+
+          <div class="cassette-buttons">
+            <button class="btn-neo-ctrl" id="prevBtn" aria-label="Lagu Sebelumnya"><i class="fa-solid fa-backward-step"></i></button>
+            <button class="btn-neo-ctrl btn-neo-play" id="playBtn" aria-label="Putar / Jeda"><i class="fa-solid fa-play" id="playIcon"></i></button>
+            <button class="btn-neo-ctrl" id="nextBtn" aria-label="Lagu Berikutnya"><i class="fa-solid fa-forward-step"></i></button>
+          </div>
+        </div>
+
+        <div class="scrubber-neo-box">
+          <div class="scrubber-track-neo" id="progressContainer">
+            <div class="scrubber-fill-neo" id="progressBar"></div>
+          </div>
+          <div class="time-neo">
+            <span id="currentTime">00:00</span>
+            <span id="totalDuration">00:00</span>
+          </div>
+        </div>
+      </div>
+      <audio id="audioPlayer" src="https://ia801503.us.archive.org/15/items/chill-lofi-song-8/chill-lofi-song-8.mp3"></audio>
+    </section>
+
+    <!-- 6. Polaroid Photo Grid -->
+    <section class="neo-card" id="gallerySection">
+      <div class="section-badge" style="background: var(--accent-pink); color: white;"><i class="fa-solid fa-camera-retro"></i> <span data-i18n="badge_gallery">POLAROID SNAPS</span></div>
+      
+      <div class="polaroid-grid">
+        <div class="polaroid-item" onclick="expandPhoto(this)">
+          <div class="polaroid-img-box">
+            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80" alt="Snap 1">
+          </div>
+          <div class="polaroid-caption">Sunday Picnic 🧺</div>
+        </div>
+
+        <div class="polaroid-item" onclick="expandPhoto(this)">
+          <div class="polaroid-img-box">
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80" alt="Snap 2">
+          </div>
+          <div class="polaroid-caption">Matcha & Cat Cafe 🐱</div>
+        </div>
+
+        <div class="polaroid-item" onclick="expandPhoto(this)">
+          <div class="polaroid-img-box">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80" alt="Snap 3">
+          </div>
+          <div class="polaroid-caption">Sunset Walk 🌅</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Cute Social Links -->
+    <section class="neo-card">
+      <div class="section-badge"><i class="fa-solid fa-comment-dots"></i> <span data-i18n="badge_social">CATCH ME ONLINE</span></div>
+      <div class="social-neo-grid">
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-neo-btn">
+          <i class="fa-brands fa-instagram" style="color: #e1306c;"></i>
+          <span>Instagram</span>
+        </a>
+        <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="social-neo-btn">
+          <i class="fa-brands fa-tiktok"></i>
+          <span>TikTok</span>
+        </a>
+        <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" class="social-neo-btn">
+          <i class="fa-brands fa-pinterest" style="color: #e60023;"></i>
+          <span>Pinterest</span>
+        </a>
+        <a href="https://spotify.com" target="_blank" rel="noopener noreferrer" class="social-neo-btn">
+          <i class="fa-brands fa-spotify" style="color: #1db954;"></i>
+          <span>Spotify</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 8.5. Personal Achievement Showcase -->
+    <section class="neo-card" id="achievementSection">
+      <div class="section-badge" style="background: var(--accent-yellow);">
+        <i class="fa-solid fa-trophy"></i>
+        <span data-i18n="badge_achievements">MY ACHIEVEMENTS</span>
+      </div>
+
+      <p class="achievement-intro" data-i18n="achievement_intro">
+        Little milestones I'm proud of. ✨
+      </p>
+
+      <div class="achievement-grid personal-achievement-grid">
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-gold">
+            <i class="fa-solid fa-medal"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2025</div>
+            <div class="achievement-name" data-i18n="achievement_1_title">🥇 1st Place — Mobile Legends</div>
+            <div class="achievement-desc" data-i18n="achievement_1_desc">
+              Juara 1 dalam turnamen Mobile Legends tingkat komunitas.
+            </div>
+          </div>
+        </article>
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-pink">
+            <i class="fa-solid fa-music"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2024</div>
+            <div class="achievement-name" data-i18n="achievement_2_title">🎹 Piano Performance Award</div>
+            <div class="achievement-desc" data-i18n="achievement_2_desc">
+              Penghargaan untuk penampilan piano terbaik dalam acara musik.
+            </div>
+          </div>
+        </article>
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-purple">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2024</div>
+            <div class="achievement-name" data-i18n="achievement_3_title">🎨 2nd Place — Digital Art</div>
+            <div class="achievement-desc" data-i18n="achievement_3_desc">
+              Juara 2 kompetisi digital art tingkat regional.
+            </div>
+          </div>
+        </article>
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-green">
+            <i class="fa-solid fa-person-running"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2025</div>
+            <div class="achievement-name" data-i18n="achievement_4_title">🏃 5K Fun Run Finisher</div>
+            <div class="achievement-desc" data-i18n="achievement_4_desc">
+              Berhasil menyelesaikan charity fun run 5K pertamanya.
+            </div>
+          </div>
+        </article>
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-blue">
+            <i class="fa-solid fa-microphone"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2023</div>
+            <div class="achievement-name" data-i18n="achievement_5_title">🎤 Talent Show Finalist</div>
+            <div class="achievement-desc" data-i18n="achievement_5_desc">
+              Masuk sebagai salah satu finalis dalam talent show sekolah.
+            </div>
+          </div>
+        </article>
+
+        <article class="achievement-card personal-achievement">
+          <div class="achievement-medal medal-yellow">
+            <i class="fa-solid fa-heart"></i>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-year">2025</div>
+            <div class="achievement-name" data-i18n="achievement_6_title">🌸 Community Contributor</div>
+            <div class="achievement-desc" data-i18n="achievement_6_desc">
+              Aktif membantu kegiatan dan project kreatif komunitas.
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 8. Send Anonymous / Say Hi Letter Box & Live Feed (Firebase) -->
+    <section class="neo-card" id="contactSection">
+      <div class="section-badge" style="background: var(--accent-yellow);"><i class="fa-solid fa-envelope-open-text"></i> <span data-i18n="badge_msg">ANONYMOUS / SAY HI BOX</span></div>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;" data-i18n="desc_msg">
+        Mau curhat, titip salam, atau sekadar cerita hari kamu? Tulis surat kecil di sini ya!
+      </p>
+
+      <form class="form-neo" id="contactForm">
+        <input type="text" class="input-neo" id="formName" placeholder="Nama samaran / Nama kamu" required maxlength="30">
+        <input type="text" class="input-neo" id="formEmail" placeholder="Email / IG (Opsional)" maxlength="50">
+        <textarea class="textarea-neo" id="formMsg" placeholder="Tulis isi surat atau cerita kamu disini..." required maxlength="500"></textarea>
+        <button type="submit" class="btn-neo-submit" id="submitBtn">
+          <span data-i18n="btn_send">Kirim Surat</span> 💌
+        </button>
+      </form>
+
+      <!-- Live Letters Wall -->
+      <div class="live-letters-wrapper">
+        <div class="live-letters-title">
+          <span>💌 Kotak Surat Terbuka (Live)</span>
+        </div>
+        <div class="letters-feed-grid" id="liveLettersList">
+          <div class="empty-letters-hint" id="emptyLetters">Belum ada surat nih... Jadilah yang pertama kirim pesan manis! ✨</div>
+        </div>
+
+        <div class="load-more-wrapper" id="loadMoreContainer" style="display: none;">
+          <button class="btn-load-more" id="loadMoreBtn">
+            <i class="fa-solid fa-rotate"></i> <span data-i18n="btn_load_more">Muat Lebih Banyak Surat 🌸</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 10. Footer -->
+    <footer class="footer-neo">
+      <p>MADE WITH 💖 BY CLARA • 2026 MOCHI MOOD</p>
+    </footer>
+
+  </div>
+
+  <!-- Modal Polaroid Preview -->
+  <div class="modal-backdrop" id="photoModal" onclick="closePhoto()">
+    <div class="modal-polaroid-view">
+      <img id="modalTargetImg" src="" alt="Expanded Snap">
+    </div>
+  </div>
+
+  <!-- Modal Reply Dialog -->
+  <div class="modal-backdrop" id="replyModal">
+    <div class="reply-modal-box">
+      <div class="reply-modal-header">
+        <span>💬 Balas Surat</span>
+        <button class="btn-neo-ctrl" onclick="closeReplyModal()" style="width: 32px; height: 32px; font-size: 0.85rem;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="reply-target-preview" id="replyTargetText">Memuat pesan...</div>
+      <form id="replyForm" class="form-neo">
+        <input type="text" class="input-neo" id="replyName" placeholder="Nama samaran kamu" required maxlength="30">
+        <textarea class="textarea-neo" id="replyMsg" placeholder="Tulis balasan manis kamu..." required maxlength="300" style="min-height: 80px;"></textarea>
+        <button type="submit" class="btn-neo-submit" id="replySubmitBtn">
+          <span>Kirim Balasan</span> 🚀
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK v10 (Modular via CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBacj9_XzpCu9s-HmT42qyIdTC6DiPltZE",
+      authDomain: "cewe-29a92.firebaseapp.com",
+      projectId: "cewe-29a92",
+      storageBucket: "cewe-29a92.firebasestorage.app",
+      messagingSenderId: "229350795068",
+      appId: "1:229350795068:web:6c0f0d24ab006d9a9b6039",
+      measurementId: "G-Q0HMLRHH2X"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const liveLettersList = document.getElementById('liveLettersList');
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+    // Reply Elements
+    const replyModal = document.getElementById('replyModal');
+    const replyForm = document.getElementById('replyForm');
+    const replySubmitBtn = document.getElementById('replySubmitBtn');
+    const replyTargetText = document.getElementById('replyTargetText');
+    let activeLetterId = null;
+
+    // Pagination Limit State
+    let currentLimit = 6;
+    let unsubscribeLetters = null;
+    const lettersCol = collection(db, "letters");
+
+    function listenLetters(limitCount) {
+      if (unsubscribeLetters) unsubscribeLetters();
+
+      const q = query(lettersCol, orderBy("timestamp", "desc"), limit(limitCount));
+
+      unsubscribeLetters = onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+          liveLettersList.innerHTML = '<div class="empty-letters-hint">Belum ada surat nih... Jadilah yang pertama kirim pesan manis! ✨</div>';
+          loadMoreContainer.style.display = 'none';
+          return;
+        }
+
+        liveLettersList.innerHTML = '';
+        snapshot.forEach((docSnap) => {
+          const letterId = docSnap.id;
+          const data = docSnap.data();
+          const card = document.createElement('div');
+          card.className = 'letter-card';
+          card.id = `letter-${letterId}`;
+
+          const sender = escapeHtml(data.name || 'Anonim 🐾');
+          const text = escapeHtml(data.msg || '');
+          const timeStr = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
+
+          card.innerHTML = `
+            <div class="letter-card-header">
+              <span class="letter-sender">🎀 ${sender}</span>
+              <span class="letter-time">${timeStr}</span>
+            </div>
+            <div class="letter-content">${text}</div>
+            <div class="letter-footer">
+              <button class="btn-reply-letter" data-id="${letterId}" data-msg="${text}" data-sender="${sender}">
+                <i class="fa-regular fa-comment-dots"></i> <span>Balas</span>
+              </button>
+            </div>
+            <div class="replies-list-container" id="replies-${letterId}" style="display: none;"></div>
+          `;
+
+          liveLettersList.appendChild(card);
+
+          // Realtime Listener for Nested Replies of this letter
+          const repliesCol = collection(db, `letters/${letterId}/replies`);
+          const repQuery = query(repliesCol, orderBy("timestamp", "asc"));
+
+          onSnapshot(repQuery, (repSnap) => {
+            const repContainer = document.getElementById(`replies-${letterId}`);
+            if (!repContainer) return;
+
+            if (repSnap.empty) {
+              repContainer.style.display = 'none';
+              repContainer.innerHTML = '';
+              return;
+            }
+
+            repContainer.style.display = 'flex';
+            repContainer.innerHTML = '';
+
+            repSnap.forEach((rDoc) => {
+              const rData = rDoc.data();
+              const rSender = escapeHtml(rData.name || 'Anonim 💬');
+              const rText = escapeHtml(rData.msg || '');
+              const rTime = rData.timestamp ? new Date(rData.timestamp.toDate()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
+
+              const rDiv = document.createElement('div');
+              rDiv.className = 'reply-card-mini';
+              rDiv.innerHTML = `
+                <div>
+                  <span class="reply-sender">↳ ${rSender}</span>
+                  <span class="reply-time">${rTime}</span>
+                </div>
+                <div class="reply-content">${rText}</div>
+              `;
+              repContainer.appendChild(rDiv);
+            });
+          });
+        });
+
+        // Show Load More if count hits current limit
+        if (snapshot.size >= limitCount) {
+          loadMoreContainer.style.display = 'flex';
+        } else {
+          loadMoreContainer.style.display = 'none';
+        }
+      }, (error) => {
+        console.error("Firestore listener error:", error);
+      });
+    }
+
+    // Initialize Realtime Listener
+    listenLetters(currentLimit);
+
+    // Load More Button Handler
+    loadMoreBtn.addEventListener('click', () => {
+      currentLimit += 6;
+      listenLetters(currentLimit);
+    });
+
+    // Handle Form Submit
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('formName').value.trim();
+      const email = document.getElementById('formEmail').value.trim();
+      const msg = document.getElementById('formMsg').value.trim();
+
+      if (!name || !msg) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Mengirim... ⏳</span>';
+
+      try {
+        await addDoc(lettersCol, {
+          name: name,
+          email: email || '-',
+          msg: msg,
+          timestamp: serverTimestamp()
+        });
+
+        contactForm.reset();
+        alert(document.documentElement.getAttribute('data-lang') === 'id' ? 'Surat kecilmu udah masuk ke kotak secara live! Makasih yaa 💖' : 'Your sweet note has arrived live! Thank you so much 💖');
+      } catch (err) {
+        console.error("Error sending letter:", err);
+        alert("Waduh, ada kendala koneksi saat kirim surat. Coba lagi ya!");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Kirim Surat</span> 💌';
+      }
+    });
+
+    // Handle Open Reply Modal
+    liveLettersList.addEventListener('click', (e) => {
+      const replyBtn = e.target.closest('.btn-reply-letter');
+      if (!replyBtn) return;
+
+      activeLetterId = replyBtn.getAttribute('data-id');
+      const targetSender = replyBtn.getAttribute('data-sender');
+      const targetMsg = replyBtn.getAttribute('data-msg');
+
+      replyTargetText.innerHTML = `<strong>${targetSender}:</strong> "${targetMsg}"`;
+      replyModal.classList.add('active');
+    });
+
+    // Handle Submit Reply
+    replyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!activeLetterId) return;
+
+      const rName = document.getElementById('replyName').value.trim();
+      const rMsg = document.getElementById('replyMsg').value.trim();
+
+      if (!rName || !rMsg) return;
+
+      replySubmitBtn.disabled = true;
+      replySubmitBtn.innerHTML = '<span>Mengirim... ⏳</span>';
+
+      try {
+        const subRepliesCol = collection(db, `letters/${activeLetterId}/replies`);
+        await addDoc(subRepliesCol, {
+          name: rName,
+          msg: rMsg,
+          timestamp: serverTimestamp()
+        });
+
+        replyForm.reset();
+        replyModal.classList.remove('active');
+        activeLetterId = null;
+      } catch (err) {
+        console.error("Error sending reply:", err);
+        alert("Gagal mengirim balasan. Coba lagi ya!");
+      } finally {
+        replySubmitBtn.disabled = false;
+        replySubmitBtn.innerHTML = '<span>Kirim Balasan</span> 🚀';
+      }
+    });
+
+    window.closeReplyModal = function() {
+      replyModal.classList.remove('active');
+      activeLetterId = null;
+    };
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+
+  <script>
+    // ==========================================
+    // 1. Copy ID Helper (In-Place Button Feedback)
+    // ==========================================
+    function copyGameId(btnElement, textToCopy) {
+      if (window.unlockAchievement) window.unlockAchievement('gamer');
+      const labelSpan = btnElement.querySelector('.btn-label');
+      const originalText = labelSpan.textContent;
+      const originalIcon = btnElement.querySelector('i').className;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        labelSpan.textContent = 'Copied! ✨';
+        btnElement.querySelector('i').className = 'fa-solid fa-check';
+        btnElement.classList.add('copied');
+
+        setTimeout(() => {
+          labelSpan.textContent = originalText;
+          btnElement.querySelector('i').className = originalIcon;
+          btnElement.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        labelSpan.textContent = 'Copied! ✨';
+        setTimeout(() => { labelSpan.textContent = originalText; }, 2000);
+      });
+    }
+
+    // ==========================================
+    // 2. Interactive 3D Cute Character Engine (Three.js)
+    // ==========================================
+    const canvas3d = document.getElementById('pet3dCanvas');
+    const wrap3d = document.getElementById('pet3dWrap');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, wrap3d.clientWidth / wrap3d.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, alpha: true, antialias: true });
+
+    renderer.setSize(wrap3d.clientWidth, wrap3d.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xfff0f5, 0.85);
+    dirLight.position.set(5, 8, 5);
+    scene.add(dirLight);
+
+    // Mochi Character Group
+    const mochiGroup = new THREE.Group();
+    scene.add(mochiGroup);
+
+    // Body (Soft Pink Mochi)
+    const bodyGeo = new THREE.SphereGeometry(1.2, 32, 32);
+    bodyGeo.scale(1.15, 0.95, 1.05);
+    const bodyMat = new THREE.MeshToonMaterial({ color: 0xffb3c6 });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    mochiGroup.add(body);
+
+    // Cheeks (Blush)
+    const blushGeo = new THREE.SphereGeometry(0.18, 16, 16);
+    const blushMat = new THREE.MeshBasicMaterial({ color: 0xff758f });
+    
+    const leftBlush = new THREE.Mesh(blushGeo, blushMat);
+    leftBlush.position.set(-0.65, -0.05, 0.98);
+    leftBlush.scale.set(1.2, 0.6, 0.4);
+    mochiGroup.add(leftBlush);
+
+    const rightBlush = new THREE.Mesh(blushGeo, blushMat);
+    rightBlush.position.set(0.65, -0.05, 0.98);
+    rightBlush.scale.set(1.2, 0.6, 0.4);
+    mochiGroup.add(rightBlush);
+
+    // Eyes Group
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0x2b2b2b });
+    const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), eyeMat);
+    leftEye.position.set(-0.38, 0.18, 1.08);
+    mochiGroup.add(leftEye);
+
+    const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), eyeMat);
+    rightEye.position.set(0.38, 0.18, 1.08);
+    mochiGroup.add(rightEye);
+
+    // Cute Kawaii Anime Mouth (:3 / W-Smile with Tongue)
+    const mouthGroup = new THREE.Group();
+    mouthGroup.position.set(0, -0.04, 1.14);
+    mochiGroup.add(mouthGroup);
+
+    const mouthArcMat = new THREE.MeshBasicMaterial({ color: 0x2b2b2b });
+
+    // Left curve (:
+    const leftArcGeo = new THREE.TorusGeometry(0.085, 0.025, 12, 24, Math.PI);
+    const leftArc = new THREE.Mesh(leftArcGeo, mouthArcMat);
+    leftArc.rotation.z = Math.PI;
+    leftArc.position.set(-0.08, 0, 0);
+    mouthGroup.add(leftArc);
+
+    // Right curve :)
+    const rightArc = new THREE.Mesh(leftArcGeo, mouthArcMat);
+    rightArc.rotation.z = Math.PI;
+    rightArc.position.set(0.08, 0, 0);
+    mouthGroup.add(rightArc);
+
+    // Cute Pink Tongue
+    const tongueGeo = new THREE.SphereGeometry(0.09, 16, 16);
+    const tongueMat = new THREE.MeshBasicMaterial({ color: 0xff758f });
+    const tongue = new THREE.Mesh(tongueGeo, tongueMat);
+    tongue.position.set(0, -0.06, -0.02);
+    tongue.scale.set(1, 1.1, 0.6);
+    tongue.visible = false;
+    mouthGroup.add(tongue);
+
+    // Cute Ribbon Bow on Top
+    const bowMat = new THREE.MeshToonMaterial({ color: 0xffea79 });
+    const bowCenter = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bowMat);
+    bowCenter.position.set(0, 1.15, 0.2);
+    mochiGroup.add(bowCenter);
+
+    const bowLeft = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 16), bowMat);
+    bowLeft.rotation.z = Math.PI / 2;
+    bowLeft.position.set(-0.35, 1.15, 0.2);
+    mochiGroup.add(bowLeft);
+
+    const bowRight = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 16), bowMat);
+    bowRight.rotation.z = -Math.PI / 2;
+    bowRight.position.set(0.35, 1.15, 0.2);
+    mochiGroup.add(bowRight);
+
+    camera.position.z = 4.4;
+
+    // Rotation & Touch Drag Interactions (Default Still)
+    let isDragging = false;
+    let prevMousePos = { x: 0, y: 0 };
+    let targetRotationY = 0;
+    let targetRotationX = 0;
+    let bounceScale = 1;
+
+    wrap3d.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      prevMousePos = { x: e.clientX, y: e.clientY };
+
+      // Kawaii Smile & Happy Wink Reaction!
+      bounceScale = 1.35;
+      tongue.visible = true;
+      mouthGroup.scale.set(1.3, 1.3, 1.3);
+      leftEye.scale.set(1.5, 0.2, 1);  // >_< wink left
+      rightEye.scale.set(1.5, 0.2, 1); // >_< wink right
+      leftBlush.scale.set(1.6, 0.9, 0.5);
+      rightBlush.scale.set(1.6, 0.9, 0.5);
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (isDragging) {
+        const deltaX = e.clientX - prevMousePos.x;
+        const deltaY = e.clientY - prevMousePos.y;
+        targetRotationY += deltaX * 0.012;
+        targetRotationX += deltaY * 0.01;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('pointerup', () => { 
+      isDragging = false;
+      setTimeout(() => {
+        tongue.visible = false;
+        mouthGroup.scale.set(1, 1, 1);
+        leftEye.scale.set(1, 1, 1);
+        rightEye.scale.set(1, 1, 1);
+        leftBlush.scale.set(1.2, 0.6, 0.4);
+        rightBlush.scale.set(1.2, 0.6, 0.4);
+      }, 600);
+    });
+
+    // Render Loop
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+
+      // Smooth rotation damping
+      mochiGroup.rotation.y += (targetRotationY - mochiGroup.rotation.y) * 0.12;
+      mochiGroup.rotation.x += (targetRotationX - mochiGroup.rotation.x) * 0.12;
+
+      // Squish scale interpolation
+      bounceScale += (1 - bounceScale) * 0.12;
+      mochiGroup.scale.set(bounceScale, 2 - bounceScale, bounceScale);
+
+      renderer.render(scene, camera);
+    }
+    animate3D();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = wrap3d.clientWidth / wrap3d.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(wrap3d.clientWidth, wrap3d.clientHeight);
+    });
+
+    // ==========================================
+    // 3. Multi-Language Engine
+    // ==========================================
+    const i18nData = {
+      id: {
+        nav_about: "Notes",
+        nav_games: "Mabar 🎮",
+        nav_spill: "Spill Outfit",
+        nav_music: "Playlist",
+        nav_gallery: "Polaroid",
+        nav_achievements: "Achievement 🏆",
+        nav_chat: "Surat",
+        badge_achievements: "PENCAPAIAN",
+        achievement_intro: "Pencapaian kecil yang bikin aku bangga. ✨",
+        achievement_1_title: "🥇 Juara 1 — Mobile Legends",
+        achievement_1_desc: "Juara 1 dalam turnamen Mobile Legends tingkat komunitas.",
+        achievement_2_title: "🎹 Piano Performance Award",
+        achievement_2_desc: "Penghargaan untuk penampilan piano terbaik dalam acara musik.",
+        achievement_3_title: "🎨 Juara 2 — Digital Art",
+        achievement_3_desc: "Juara 2 kompetisi digital art tingkat regional.",
+        achievement_4_title: "🏃 5K Fun Run Finisher",
+        achievement_4_desc: "Berhasil menyelesaikan charity fun run 5K pertamanya.",
+        achievement_5_title: "🎤 Finalis Talent Show",
+        achievement_5_desc: "Masuk sebagai salah satu finalis dalam talent show sekolah.",
+        achievement_6_title: "🌸 Community Contributor",
+        achievement_6_desc: "Aktif membantu kegiatan dan project kreatif komunitas.",
+        hint_3d: "👆 Drag buat muter • Tap/Klik biar senyum gemas!",
+        hero_sub: "Tempat kumpul diary kecil, cari temen mabar game seru, dengerin playlist lo-fi santai, dan spill racun belanja!",
+        badge_notes: "DAILY STICKY DIARY",
+        note_1: "Iced Caramel Macchiato + Croissant cokelat hangat pas lagi ngerjain tugas sore.",
+        note_2: "Buku self-healing santai tentang menikmati hal-hal kecil tanpa FOMO.",
+        note_3: "Pelan-pelan aja, kamu udah berproses hebat kok hari ini. Don't be too hard on yourself!",
+        badge_mabar: "AYO MABAR BARENG! 🎮",
+        btn_copy_roblox: "Copy Username",
+        btn_copy_mlbb: "Copy MLBB ID",
+        btn_discord: "Add on Discord",
+        badge_spill: "FAVORITE STUFF & SPILL",
+        badge_player: "CHILL CASSETTE",
+        badge_gallery: "POLAROID SNAPS",
+        badge_social: "CATCH ME ONLINE",
+        badge_msg: "ANONYMOUS / SAY HI BOX",
+        desc_msg: "Mau curhat, titip salam, atau sekadar cerita hari kamu? Tulis surat kecil di sini ya!",
+        btn_send: "Kirim Surat",
+        btn_load_more: "Muat Lebih Banyak Surat 🌸",
+        ph_name: "Nama samaran / Nama kamu",
+        ph_email: "Email / IG (Opsional)",
+        ph_msg: "Tulis isi surat atau cerita kamu disini..."
+      },
+      en: {
+        nav_about: "Notes",
+        nav_games: "Let's Play 🎮",
+        nav_spill: "Outfit Spill",
+        nav_music: "Playlist",
+        nav_gallery: "Polaroid",
+        nav_achievements: "Achievements 🏆",
+        nav_chat: "Send Letter",
+        badge_achievements: "ACHIEVEMENTS",
+        achievement_intro: "Little milestones I'm proud of. ✨",
+        achievement_1_title: "🥇 1st Place — Mobile Legends",
+        achievement_1_desc: "1st place in a community-level Mobile Legends tournament.",
+        achievement_2_title: "🎹 Piano Performance Award",
+        achievement_2_desc: "Awarded for the best piano performance at a music event.",
+        achievement_3_title: "🎨 2nd Place — Digital Art",
+        achievement_3_desc: "2nd place in a regional digital art competition.",
+        achievement_4_title: "🏃 5K Fun Run Finisher",
+        achievement_4_desc: "Successfully completed her first 5K charity fun run.",
+        achievement_5_title: "🎤 Talent Show Finalist",
+        achievement_5_desc: "Selected as one of the finalists in a school talent show.",
+        achievement_6_title: "🌸 Community Contributor",
+        achievement_6_desc: "Actively helped with community events and creative projects.",
+        hint_3d: "👆 Drag to rotate • Tap/Click to make it smile!",
+        hero_sub: "A tiny corner for daily diary thoughts, finding gaming buddies, cozy lo-fi tunes, and favorite aesthetic finds!",
+        badge_notes: "DAILY STICKY DIARY",
+        note_1: "Iced Caramel Macchiato + warm chocolate croissant while doing afternoon study sessions.",
+        note_2: "A gentle self-care book about romanticizing simple joys without feeling FOMO.",
+        note_3: "Take it easy bestie, you are doing wonderful today. Don't be too hard on yourself!",
+        badge_mabar: "LET'S PLAY TOGETHER! 🎮",
+        btn_copy_roblox: "Copy Username",
+        btn_copy_mlbb: "Copy MLBB ID",
+        btn_discord: "Add on Discord",
+        badge_spill: "FAVORITE STUFF & SPILL",
+        badge_player: "CHILL CASSETTE",
+        badge_gallery: "POLAROID SNAPS",
+        badge_social: "CATCH ME ONLINE",
+        badge_msg: "ANONYMOUS / SAY HI BOX",
+        desc_msg: "Want to vent, send sweet greetings, or share your day? Leave a note here!",
+        btn_send: "Send Letter",
+        btn_load_more: "Load More Letters 🌸",
+        ph_name: "Nickname / Your name",
+        ph_email: "Email / IG handle (Optional)",
+        ph_msg: "Write your note or sweet story here..."
+      }
+    };
+
+    let currentLang = 'id';
+    const langToggle = document.getElementById('langToggle');
+    const langLabel = document.getElementById('langLabel');
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.setAttribute('data-lang', lang);
+      langLabel.textContent = lang === 'id' ? 'EN' : 'ID';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nData[lang][key]) {
+          el.textContent = i18nData[lang][key];
+        }
+      });
+
+      document.getElementById('formName').placeholder = i18nData[lang].ph_name;
+      document.getElementById('formEmail').placeholder = i18nData[lang].ph_email;
+      document.getElementById('formMsg').placeholder = i18nData[lang].ph_msg;
+    }
+
+    langToggle.addEventListener('click', () => {
+      applyLanguage(currentLang === 'id' ? 'en' : 'id');
+    });
+
+    // ==========================================
+    // 4. Theme Toggle (Strawberry Pink / Matcha Green)
+    // ==========================================
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'pink' ? 'matcha' : 'pink';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Sync 3D Mochi Color with Theme
+      bodyMat.color.setHex(newTheme === 'pink' ? 0xffb3c6 : 0xbbf7d0);
+    });
+
+    // ==========================================
+    // 5. Hamburger Mobile Drawer
+    // ==========================================
+    const menuToggle = document.getElementById('menuToggle');
+    const drawerClose = document.getElementById('drawerClose');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+
+    function toggleDrawer(open) {
+      mobileDrawer.classList.toggle('active', open);
+      drawerOverlay.classList.toggle('active', open);
+    }
+
+    menuToggle.addEventListener('click', () => toggleDrawer(true));
+    drawerClose.addEventListener('click', () => toggleDrawer(false));
+    drawerOverlay.addEventListener('click', () => toggleDrawer(false));
+
+    document.querySelectorAll('.drawer-nav-link').forEach(link => {
+      link.addEventListener('click', () => toggleDrawer(false));
+    });
+
+    // ==========================================
+    // 6. Cassette Tape Audio Player Engine (Cute Lo-Fi Playlist)
+    // ==========================================
+    const playlist = [
+      {
+        title: "Strawberry Sundae",
+        artist: "Pastel Beats • Lo-fi Girl Vibes",
+        src: "https://ia801503.us.archive.org/15/items/chill-lofi-song-8/chill-lofi-song-8.mp3"
+      },
+      {
+        title: "Cozy Afternoon Tea",
+        artist: "Mochi SoundLab • Bedroom Pop",
+        src: "https://ia800109.us.archive.org/11/items/lofi-study-chill/study-lofi.mp3"
+      },
+      {
+        title: "Matcha Sunset Walk",
+        artist: "Chillex Records • Aesthetic Lo-fi",
+        src: "https://ia801406.us.archive.org/21/items/lofi-chill-track-02/lofi-track.mp3"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    const audio = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const trackTitle = document.getElementById('trackTitle');
+    const trackArtist = document.getElementById('trackArtist');
+    const progressBar = document.getElementById('progressBar');
+    const progressContainer = document.getElementById('progressContainer');
+    const currentTimeEl = document.getElementById('currentTime');
+    const totalDurationEl = document.getElementById('totalDuration');
+    const tapeWheel = document.getElementById('tapeWheel');
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "00:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      audio.src = track.src;
+      trackTitle.textContent = track.title;
+      trackArtist.textContent = track.artist;
+      progressBar.style.width = '0%';
+      currentTimeEl.textContent = '00:00';
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        playIcon.classList.remove('fa-play');
+        playIcon.classList.add('fa-pause');
+        tapeWheel.classList.add('playing');
+      } else {
+        audio.pause();
+        playIcon.classList.remove('fa-pause');
+        playIcon.classList.add('fa-play');
+        tapeWheel.classList.remove('playing');
+      }
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+
+    prevBtn.addEventListener('click', () => {
+      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      tapeWheel.classList.add('playing');
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      tapeWheel.classList.add('playing');
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${percent}%`;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      totalDurationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      nextBtn.click();
+    });
+
+    progressContainer.addEventListener('click', (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      if (audio.duration) {
+        audio.currentTime = (clickX / width) * audio.duration;
+      }
+    });
+
+    // ==========================================
+    // 7. Polaroid Lightbox Modal
+    // ==========================================
+    function expandPhoto(element) {
+      const src = element.querySelector('img').src;
+      document.getElementById('modalTargetImg').src = src;
+      document.getElementById('photoModal').classList.add('active');
+    }
+
+    function closePhoto() {
+      document.getElementById('photoModal').classList.remove('active');
+    }
+
+
+    // ==========================================
+    const achievementDefinitions = {
+      welcome: {
+        id: 'welcome',
+        idName: 'Selamat Datang',
+        enName: 'Welcome to Mochi Mood',
+        idDesc: 'Kunjungi cozy corner Clara.',
+        enDesc: "Visit Clara's cozy corner."
+      },
+      mochi: {
+        id: 'mochi',
+        idName: 'Teman Mochi',
+        enName: 'Mochi Friend',
+        idDesc: 'Sentuh Mochi 3D.',
+        enDesc: 'Touch the 3D Mochi.'
+      },
+      gamer: {
+        id: 'gamer',
+        idName: 'Ready Player',
+        enName: 'Ready Player',
+        idDesc: 'Copy salah satu ID game.',
+        enDesc: 'Copy a game ID.'
+      },
+      music: {
+        id: 'music',
+        idName: 'Lo-fi Lover',
+        enName: 'Lo-fi Lover',
+        idDesc: 'Putar lagu dari cassette.',
+        enDesc: 'Play a song from the cassette.'
+      },
+      photos: {
+        id: 'photos',
+        idName: 'Photo Hunter',
+        enName: 'Photo Hunter',
+        idDesc: 'Buka ketiga Polaroid.',
+        enDesc: 'Open all 3 Polaroids.'
+      },
+      theme: {
+        id: 'theme',
+        idName: 'Mood Switcher',
+        enName: 'Mood Switcher',
+        idDesc: 'Coba kedua mood warna.',
+        enDesc: 'Try both color moods.'
+      },
+      language: {
+        id: 'language',
+        idName: 'Bilingual Bestie',
+        enName: 'Bilingual Bestie',
+        idDesc: 'Ganti bahasa website.',
+        enDesc: 'Switch the website language.'
+      },
+      letter: {
+        id: 'letter',
+        idName: 'Sweet Messenger',
+        enName: 'Sweet Messenger',
+        idDesc: 'Berhasil mengirim surat.',
+        enDesc: 'Successfully send a letter.'
+      }
+    };
+
+    const achievementState = JSON.parse(localStorage.getItem('mochiAchievements') || '{}');
+    const photoProgress = new Set();
+
+    function saveAchievementState() {
+      localStorage.setItem('mochiAchievements', JSON.stringify(achievementState));
+    }
+
+    function showAchievementToast(key) {
+      const def = achievementDefinitions[key];
+      const lang = document.documentElement.getAttribute('data-lang') || 'id';
+      const title = lang === 'id' ? def.idName : def.enName;
+
+      let toast = document.getElementById('achievementToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'achievementToast';
+        toast.className = 'achievement-toast';
+        document.body.appendChild(toast);
+      }
+
+      toast.innerHTML = `<span style="font-size:1.35rem;">🏆</span><span>Achievement unlocked: ${title}!</span>`;
+      toast.classList.add('show');
+      clearTimeout(window.__achievementToastTimer);
+      window.__achievementToastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    function renderAchievements() {
+      const lang = document.documentElement.getAttribute('data-lang') || 'id';
+      const keys = Object.keys(achievementDefinitions);
+      let unlocked = 0;
+
+      keys.forEach(key => {
+        const def = achievementDefinitions[key];
+        const card = document.querySelector(`[data-achievement="${key}"]`);
+        if (!card) return;
+
+        const isUnlocked = !!achievementState[key];
+        if (isUnlocked) unlocked++;
+
+        card.classList.toggle('unlocked', isUnlocked);
+        card.classList.toggle('locked', !isUnlocked);
+
+        const name = card.querySelector(`[data-ach-name="${key}"]`);
+        const desc = card.querySelector(`[data-ach-desc="${key}"]`);
+        const status = card.querySelector(`[data-ach-status="${key}"]`);
+
+        if (name) name.textContent = lang === 'id' ? def.idName : def.enName;
+        if (desc) desc.textContent = lang === 'id' ? def.idDesc : def.enDesc;
+        if (status) status.textContent = isUnlocked
+          ? (lang === 'id' ? 'TERBUKA' : 'UNLOCKED')
+          : (lang === 'id' ? 'TERKUNCI' : 'LOCKED');
+      });
+
+      const percent = (unlocked / keys.length) * 100;
+      const fill = document.getElementById('achievementProgressFill');
+      const summary = document.getElementById('achievementSummary');
+
+      if (fill) fill.style.width = `${percent}%`;
+      if (summary) {
+        summary.textContent = lang === 'id'
+          ? `${unlocked} / ${keys.length} terbuka`
+          : `${unlocked} / ${keys.length} unlocked`;
+      }
+    }
+
+    function unlockAchievement(key) {
+      if (!achievementDefinitions[key] || achievementState[key]) return;
+      achievementState[key] = true;
+      saveAchievementState();
+      renderAchievements();
+      showAchievementToast(key);
+    }
+
+    // First visit is intentionally automatic.
+    unlockAchievement('welcome');
+
+    // Make the system available to other script blocks.
+    window.unlockAchievement = unlockAchievement;
+    window.renderAchievements = renderAchievements;
+
+    // Re-render whenever language changes.
+    const originalApplyLanguage = applyLanguage;
+    applyLanguage = function(lang) {
+      originalApplyLanguage(lang);
+      renderAchievements();
+    };
+
+    // Theme achievement.
+    let seenThemes = new Set([document.documentElement.getAttribute('data-theme') || 'pink']);
+    themeToggle.addEventListener('click', () => {
+      seenThemes.add(document.documentElement.getAttribute('data-theme'));
+      if (seenThemes.size >= 2) unlockAchievement('theme');
+    });
+
+    // Language achievement.
+    langToggle.addEventListener('click', () => unlockAchievement('language'));
+
+    // Mochi achievement.
+    wrap3d.addEventListener('pointerdown', () => unlockAchievement('mochi'));
+
+    // Photo achievement.
+    const originalExpandPhoto = expandPhoto;
+    expandPhoto = function(element) {
+      const allPhotos = [...document.querySelectorAll('.polaroid-item')];
+      const index = allPhotos.indexOf(element);
+      if (index >= 0) photoProgress.add(index);
+      originalExpandPhoto(element);
+      if (photoProgress.size >= allPhotos.length) unlockAchievement('photos');
+    };
+
+    // Music achievement.
+    playBtn.addEventListener('click', () => unlockAchievement('music'));
+
+    // Initial render.
+    renderAchievements();
+  </script>
+</body>
+</html>
