@@ -368,8 +368,8 @@
       color: var(--text-main);
     }
 
-    /* 3. Pro-Grade Modern Audio Command Console */
-    .soundscape-wrapper {
+    /* 3. Career Journey Timeline */
+    .career-wrapper {
       border-top: 1px solid var(--border-glow);
       padding-top: 50px;
       display: flex;
@@ -377,227 +377,63 @@
       gap: 24px;
     }
 
-    .pro-player-console {
+    .career-panel {
       background: var(--surface-btn);
       border: 1px solid var(--border-glow);
       border-radius: 16px;
-      padding: 28px;
+      padding: 30px;
       backdrop-filter: blur(20px);
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
-    .pro-player-main {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .pro-track-identity {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      min-width: 0;
-    }
-
-    .pro-cover-box {
+    .career-list {
+      display: grid;
+      gap: 18px;
       position: relative;
-      width: 68px;
-      height: 68px;
-      border-radius: 12px;
-      overflow: hidden;
-      flex-shrink: 0;
+    }
+
+    .career-item {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 22px;
+      padding: 22px;
       border: 1px solid var(--border-glow);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 14px;
+      transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
     }
 
-    .pro-cover-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
+    .career-item:hover {
+      border-color: var(--gold-accent);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
     }
 
-    .pro-cover-box.playing img {
-      transform: scale(1.08);
-    }
-
-    .pro-track-details {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow: hidden;
-    }
-
-    .pro-track-details .track-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      letter-spacing: -0.01em;
-    }
-
-    .pro-track-details .track-artist {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
+    .career-period {
+      color: var(--gold-accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
     }
 
-    .pro-spectrum-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      height: 18px;
-      margin-top: 2px;
-    }
-
-    .pro-spectrum-bars span {
-      width: 2.5px;
-      height: 20%;
-      background: var(--gold-accent);
-      border-radius: 2px;
-      transition: height 0.15s ease;
-    }
-
-    /* Player Controls */
-    .pro-player-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .btn-pro-ctrl {
-      background: var(--surface-btn);
-      border: 1px solid var(--border-glow);
-      color: var(--text-muted);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      font-size: 0.95rem;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-pro-ctrl:hover {
+    .career-role {
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--text-main);
-      border-color: var(--border-hover);
-      background: var(--surface-hover);
-      transform: translateY(-1px);
+      margin-bottom: 5px;
     }
 
-    .btn-pro-play {
-      background: var(--gold-accent);
-      color: #08090c;
-      border: none;
-      width: 50px;
-      height: 50px;
-      font-size: 1.15rem;
-      box-shadow: 0 0 20px var(--gold-glow);
-    }
-
-    [data-theme="light"] .btn-pro-play {
-      color: #ffffff;
-    }
-
-    .btn-pro-play:hover {
-      filter: brightness(1.1);
-      transform: scale(1.06);
-    }
-
-    /* Volume Console */
-    .pro-volume-panel {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-left: 8px;
-      border-left: 1px solid var(--border-glow);
-    }
-
-    .vol-icon {
+    .career-company {
       color: var(--text-muted);
-      font-size: 0.85rem;
-      cursor: pointer;
-      width: 18px;
-      transition: color 0.2s ease;
+      font-size: 0.88rem;
+      margin-bottom: 10px;
     }
 
-    .vol-icon:hover {
-      color: var(--gold-accent);
-    }
-
-    .vol-slider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 70px;
-      height: 4px;
-      background: var(--border-hover);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .vol-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--gold-accent);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-
-    /* Scrubber & Timeline */
-    .pro-timeline-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .scrubber-track {
-      position: relative;
-      height: 6px;
-      width: 100%;
-      background: var(--surface-hover);
-      border-radius: 999px;
-      cursor: pointer;
-      overflow: hidden;
-      transition: height 0.2s ease;
-    }
-
-    .scrubber-track:hover {
-      height: 8px;
-    }
-
-    .scrubber-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 0%;
-      background: var(--gold-accent);
-      border-radius: 999px;
-      pointer-events: none;
-      transition: width 0.1s linear;
-    }
-
-    .time-indicators {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      font-variant-numeric: tabular-nums;
+    .career-desc {
       color: var(--text-muted);
-      letter-spacing: 0.05em;
+      font-size: 0.95rem;
+      line-height: 1.7;
     }
 
     /* 4. Grand Visual Showcase (Cinematic Gallery) */
@@ -943,17 +779,8 @@
         grid-template-columns: 1fr;
         gap: 24px;
       }
-      .pro-player-main {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .pro-player-controls {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .pro-volume-panel {
-        border-left: none;
-        padding-left: 0;
+      .career-item {
+        grid-template-columns: 1fr;
       }
       .gallery-showcase-grid {
         grid-template-columns: 1fr;
@@ -988,7 +815,7 @@
       
       <div class="nav-desktop-links">
         <a href="#aboutSection" class="nav-link" data-i18n="nav_about">Profil</a>
-        <a href="#audioSection" class="nav-link" data-i18n="nav_audio">Audio</a>
+        <a href="#careerSection" class="nav-link" data-i18n="nav_career">Karir</a>
         <a href="#visualSection" class="nav-link" data-i18n="nav_visuals">Visual</a>
         <a href="#worksSection" class="nav-link" data-i18n="nav_works">Karya</a>
         <a href="#contactSection" class="nav-link" data-i18n="nav_contact">Kontak</a>
@@ -1025,7 +852,7 @@
     </div>
     <div class="drawer-nav-list">
       <a href="#aboutSection" class="drawer-nav-link" data-i18n="nav_about">Profil</a>
-      <a href="#audioSection" class="drawer-nav-link" data-i18n="nav_audio">Audio</a>
+      <a href="#careerSection" class="drawer-nav-link" data-i18n="nav_career">Karir</a>
       <a href="#visualSection" class="drawer-nav-link" data-i18n="nav_visuals">Visual</a>
       <a href="#worksSection" class="drawer-nav-link" data-i18n="nav_works">Karya</a>
       <a href="#contactSection" class="drawer-nav-link" data-i18n="nav_contact">Kontak</a>
@@ -1054,14 +881,14 @@
         <div class="profile-entry">
           <div class="entry-tag"><i class="fa-solid fa-palette"></i> <span data-i18n="tag_focus">Creative Focus</span></div>
           <div class="entry-text" data-i18n="desc_focus">
-            Mengeksplorasi produksi visual bernuansa gelap, komposisi audio atmosferik, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.
+            Mengeksplorasi produksi visual bernuansa gelap, pengalaman brand, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.
           </div>
         </div>
 
         <div class="profile-entry">
           <div class="entry-tag"><i class="fa-solid fa-compass"></i> <span data-i18n="tag_story">Background & Story</span></div>
           <div class="entry-text" data-i18n="desc_story">
-            Semua berawal dari ketertarikan pada fotografi jalanan dan rekaman audio analog. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta soundscape tematik</strong> yang siap dinikmati audiens.
+            Semua berawal dari ketertarikan pada fotografi jalanan dan desain visual. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta identitas brand tematik</strong> yang siap dinikmati audiens.
           </div>
         </div>
 
@@ -1072,7 +899,7 @@
           </div>
           <div class="pill-stack">
             <span class="badge-subtle">Sony Alpha Series</span>
-            <span class="badge-subtle">Ableton Live</span>
+            <span class="badge-subtle">Figma</span>
             <span class="badge-subtle">DaVinci Resolve</span>
             <span class="badge-subtle">Lightroom Classic</span>
             <span class="badge-subtle">Mechanical Setup</span>
@@ -1080,63 +907,48 @@
         </div>
 
         <div class="profile-entry">
-          <div class="entry-tag"><i class="fa-solid fa-record-vinyl"></i> <span data-i18n="tag_tastes">Influences & Tastes</span></div>
+          <div class="entry-tag"><i class="fa-solid fa-briefcase"></i> <span data-i18n="tag_tastes">Influences & Tastes</span></div>
           <div class="entry-text" data-i18n="desc_tastes">
-            Inspirasi berkarya banyak dipengaruhi oleh <strong>musik ambient lo-fi, sinematografi noir, kopi seduh manual, dan arsitektur minimalis</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.
+            Inspirasi berkarya banyak dipengaruhi oleh <strong>sinematografi noir, kopi seduh manual, arsitektur minimalis, dan pengalaman brand premium</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. Pro-Grade Modern Audio Player Console -->
-    <section class="soundscape-wrapper" id="audioSection">
-      <div class="section-label" data-i18n="sec_audio">Acoustic Moodboard</div>
+    <!-- 3. Career Journey Timeline -->
+    <section class="career-wrapper" id="careerSection">
+      <div class="section-label" data-i18n="sec_career">Jenjang Karir</div>
       
-      <div class="pro-player-console">
-        <div class="pro-player-main">
-          
-          <div class="pro-track-identity">
-            <div class="pro-cover-box" id="trackCover">
-              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80" alt="Album Cover">
+      <div class="career-panel">
+        <div class="career-list">
+          <article class="career-item">
+            <div class="career-period">2024 — Sekarang</div>
+            <div>
+              <div class="career-role">Creative Director</div>
+              <div class="career-company">AURA Studio · Jakarta</div>
+              <p class="career-desc">Memimpin konsep visual, arahan brand, dan produksi campaign digital untuk klien lifestyle serta portofolio kreatif premium.</p>
             </div>
-            <div class="pro-track-details">
-              <div class="track-title" id="trackTitle">Midnight Horizon</div>
-              <div class="track-artist" id="trackArtist">Original Soundtrack • Session Zero</div>
-              <div class="pro-spectrum-bars" id="audioPulse">
-                <span style="height: 30%"></span>
-                <span style="height: 60%"></span>
-                <span style="height: 100%"></span>
-                <span style="height: 45%"></span>
-                <span style="height: 80%"></span>
-              </div>
+          </article>
+
+          <article class="career-item">
+            <div class="career-period">2022 — 2024</div>
+            <div>
+              <div class="career-role">Senior Visual Designer</div>
+              <div class="career-company">Noir Creative Lab · Bandung</div>
+              <p class="career-desc">Mengerjakan sistem visual, landing page, asset media sosial, dan dokumentasi brand untuk peluncuran produk digital.</p>
             </div>
-          </div>
+          </article>
 
-          <div class="pro-player-controls">
-            <button class="btn-pro-ctrl" id="prevBtn" aria-label="Previous Track"><i class="fa-solid fa-backward-step"></i></button>
-            <button class="btn-pro-ctrl btn-pro-play" id="playBtn" aria-label="Play / Pause"><i class="fa-solid fa-play" id="playIcon"></i></button>
-            <button class="btn-pro-ctrl" id="nextBtn" aria-label="Next Track"><i class="fa-solid fa-forward-step"></i></button>
-            
-            <div class="pro-volume-panel">
-              <i class="fa-solid fa-volume-high vol-icon" id="volumeIcon" title="Mute / Unmute"></i>
-              <input type="range" class="vol-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" aria-label="Volume">
+          <article class="career-item">
+            <div class="career-period">2020 — 2022</div>
+            <div>
+              <div class="career-role">Freelance Photographer & Editor</div>
+              <div class="career-company">Independent Projects · Remote</div>
+              <p class="career-desc">Mengelola proyek foto produk, editing warna, dan materi presentasi visual untuk UMKM, kreator, dan personal brand.</p>
             </div>
-          </div>
-
-        </div>
-
-        <div class="pro-timeline-container">
-          <div class="scrubber-track" id="progressContainer">
-            <div class="scrubber-fill" id="progressBar"></div>
-          </div>
-          <div class="time-indicators">
-            <span id="currentTime">00:00</span>
-            <span id="totalDuration">00:00</span>
-          </div>
+          </article>
         </div>
       </div>
-
-      <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
     </section>
 
     <!-- 4. Grand Visual Showcase -->
@@ -1178,9 +990,9 @@
           <i class="fa-brands fa-youtube"></i>
           <span data-i18n="soc_youtube">YouTube Channel</span>
         </a>
-        <a href="https://spotify.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
-          <i class="fa-brands fa-spotify"></i>
-          <span data-i18n="soc_spotify">Spotify Playlists</span>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-grand-btn">
+          <i class="fa-brands fa-linkedin-in"></i>
+          <span data-i18n="soc_linkedin">LinkedIn</span>
         </a>
       </div>
     </section>
@@ -1203,12 +1015,12 @@
         <div class="work-item">
           <div class="work-info">
             <div class="work-header">
-              <span class="work-title">Midnight Soundscapes</span>
+              <span class="work-title">Brand Identity Sprint</span>
               <span class="work-year">2026</span>
             </div>
-            <p class="work-desc" data-i18n="desc_work2">Kompilasi audio atmosferik 24-bit tanpa vokal yang dirancang khusus sebagai pengiring fokus kerja larut malam.</p>
+            <p class="work-desc" data-i18n="desc_work2">Pengalaman proyek intensif dua minggu untuk membangun identitas visual, moodboard, dan aset presentasi brand.</p>
           </div>
-          <a href="#" class="work-link-btn"><span data-i18n="btn_work2">Listen Full</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <a href="#" class="work-link-btn"><span data-i18n="btn_work2">View Case</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
     </section>
@@ -1218,7 +1030,7 @@
       <div class="inquiry-meta">
         <div class="section-label" data-i18n="sec_contact">Direct Line</div>
         <p style="font-size: 1rem; color: var(--text-muted); line-height: 1.7;" data-i18n="desc_contact">
-          Terbuka untuk kolaborasi proyek visual, lisensi audio latar, atau sekadar diskusi ide kreatif.
+          Terbuka untuk kolaborasi proyek visual, identitas brand, atau sekadar diskusi ide kreatif.
         </p>
       </div>
       <form class="inquiry-form" id="contactForm" onsubmit="event.preventDefault(); alert(document.documentElement.getAttribute('data-lang') === 'id' ? 'Pesan Terkirim.' : 'Transmission Sent.');">
@@ -1257,33 +1069,33 @@
     const i18nData = {
       id: {
         nav_about: "Profil",
-        nav_audio: "Audio",
+        nav_career: "Karir",
         nav_visuals: "Visual",
         nav_works: "Karya",
         nav_contact: "Kontak",
         hero_subtitle: "Independent Creator & Visual Curator",
         sec_profile: "Profile & Perspectives",
         tag_focus: "Creative Focus",
-        desc_focus: "Mengeksplorasi produksi visual bernuansa gelap, komposisi audio atmosferik, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.",
+        desc_focus: "Mengeksplorasi produksi visual bernuansa gelap, pengalaman brand, dan kurasi antarmuka digital. Fokus utama saya adalah menciptakan <strong>karya dengan mood yang tenang, bersih, dan berkarakter kuat</strong> tanpa elemen berlebihan.",
         tag_story: "Background & Story",
-        desc_story: "Semua berawal dari ketertarikan pada fotografi jalanan dan rekaman audio analog. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta soundscape tematik</strong> yang siap dinikmati audiens.",
+        desc_story: "Semua berawal dari ketertarikan pada fotografi jalanan dan desain visual. Dari sana, saya terus bereksperimen secara mandiri untuk merilis <strong>proyek visual, preset warna, serta identitas brand tematik</strong> yang siap dinikmati audiens.",
         tag_arsenal: "Creative Arsenal",
         desc_arsenal: "Perangkat keras dan aplikasi utama yang menemani setiap sesi produksi kreatif:",
         tag_tastes: "Influences & Tastes",
-        desc_tastes: "Inspirasi berkarya banyak dipengaruhi oleh <strong>musik ambient lo-fi, sinematografi noir, kopi seduh manual, dan arsitektur minimalis</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.",
-        sec_audio: "Acoustic Moodboard",
+        desc_tastes: "Inspirasi berkarya banyak dipengaruhi oleh <strong>sinematografi noir, kopi seduh manual, arsitektur minimalis, dan pengalaman brand premium</strong>. Detail-detail ini menjadi fondasi estetika di setiap rilisan.",
+        sec_career: "Jenjang Karir",
         sec_visuals: "Curated Visuals",
         sec_socials: "Social Channels",
         soc_twitter: "X / Thoughts",
         soc_youtube: "YouTube Channel",
-        soc_spotify: "Spotify Playlists",
+        soc_linkedin: "LinkedIn",
         sec_works: "Featured Releases",
         desc_work1: "Koleksi preset warna dan profil visual monokrom untuk fotografer jalanan dan kreator video independen.",
         btn_work1: "View Asset",
-        desc_work2: "Kompilasi audio atmosferik 24-bit tanpa vokal yang dirancang khusus sebagai pengiring fokus kerja larut malam.",
-        btn_work2: "Listen Full",
+        desc_work2: "Pengalaman proyek intensif dua minggu untuk membangun identitas visual, moodboard, dan aset presentasi brand.",
+        btn_work2: "View Case",
         sec_contact: "Direct Line",
-        desc_contact: "Terbuka untuk kolaborasi proyek visual, lisensi audio latar, atau sekadar diskusi ide kreatif.",
+        desc_contact: "Terbuka untuk kolaborasi proyek visual, identitas brand, atau sekadar diskusi ide kreatif.",
         btn_send: "Kirim Pesan",
         ph_name: "Nama / Brand",
         ph_email: "Alamat Email",
@@ -1291,33 +1103,33 @@
       },
       en: {
         nav_about: "About",
-        nav_audio: "Sound",
+        nav_career: "Career",
         nav_visuals: "Gallery",
         nav_works: "Releases",
         nav_contact: "Contact",
         hero_subtitle: "Independent Creator & Visual Curator",
         sec_profile: "Profile & Perspectives",
         tag_focus: "Creative Focus",
-        desc_focus: "Exploring dark-toned visual production, atmospheric sound design, and interface curation. My priority is crafting <strong>works with a tranquil, refined, and distinct aesthetic</strong> devoid of excess clutter.",
+        desc_focus: "Exploring dark-toned visual production, brand experiences, and interface curation. My priority is crafting <strong>works with a tranquil, refined, and distinct aesthetic</strong> devoid of excess clutter.",
         tag_story: "Background & Story",
-        desc_story: "Originating from a genuine affinity for street photography and analog recording, I consistently develop <strong>visual palettes, custom color profiles, and thematic soundscapes</strong> made for creative exploration.",
+        desc_story: "Originating from a genuine affinity for street photography and visual design, I consistently develop <strong>visual palettes, custom color profiles, and thematic brand identities</strong> made for creative exploration.",
         tag_arsenal: "Creative Arsenal",
         desc_arsenal: "Essential hardware and software driving my everyday creative productions:",
         tag_tastes: "Influences & Tastes",
-        desc_tastes: "My creative output is shaped by <strong>ambient soundscapes, noir cinematography, manual brew coffee, and minimalist brutalism</strong>. These textures form the core of each release.",
-        sec_audio: "Acoustic Moodboard",
+        desc_tastes: "My creative output is shaped by <strong>noir cinematography, manual brew coffee, minimalist brutalism, and premium brand experiences</strong>. These textures form the core of each release.",
+        sec_career: "Career Journey",
         sec_visuals: "Curated Visuals",
         sec_socials: "Social Channels",
         soc_twitter: "X / Thoughts",
         soc_youtube: "YouTube Channel",
-        soc_spotify: "Spotify Playlists",
+        soc_linkedin: "LinkedIn",
         sec_works: "Featured Releases",
         desc_work1: "Curated monochrome color presets and visual LUTs tailored for street photographers and filmmakers.",
         btn_work1: "View Asset",
-        desc_work2: "A 24-bit instrumental soundscape series crafted specifically for deep late-night focus sessions.",
-        btn_work2: "Listen Full",
+        desc_work2: "A two-week intensive project building visual identity, moodboards, and presentation assets for a brand launch.",
+        btn_work2: "View Case",
         sec_contact: "Direct Line",
-        desc_contact: "Open for visual collaborations, soundtrack licensing, or curated creative inquiries.",
+        desc_contact: "Open for visual collaborations, brand identity work, or curated creative inquiries.",
         btn_send: "Transmit Message",
         ph_name: "Name / Organization",
         ph_email: "Email Address",
@@ -1385,159 +1197,6 @@
     document.querySelectorAll('.drawer-nav-link').forEach(link => {
       link.addEventListener('click', () => toggleDrawer(false));
     });
-
-    // ==========================================
-    // 4. Pro Audio Player Engine
-    // ==========================================
-    const playlist = [
-      {
-        title: "Midnight Horizon",
-        artist: "Original Soundtrack • Session Zero",
-        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        cover: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80"
-      },
-      {
-        title: "Celestial Resonance",
-        artist: "Horizon Lab • Lossless Master",
-        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        cover: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=200&auto=format&fit=crop&q=80"
-      }
-    ];
-
-    let currentTrackIndex = 0;
-    const audio = document.getElementById('audioPlayer');
-    const playBtn = document.getElementById('playBtn');
-    const playIcon = document.getElementById('playIcon');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const trackTitle = document.getElementById('trackTitle');
-    const trackArtist = document.getElementById('trackArtist');
-    const trackCover = document.getElementById('trackCover');
-    const progressBar = document.getElementById('progressBar');
-    const progressContainer = document.getElementById('progressContainer');
-    const currentTimeEl = document.getElementById('currentTime');
-    const totalDurationEl = document.getElementById('totalDuration');
-    const volumeSlider = document.getElementById('volumeSlider');
-    const volumeIcon = document.getElementById('volumeIcon');
-    const pulseBars = document.querySelectorAll('#audioPulse span');
-    let pulseInterval = null;
-
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return "00:00";
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function loadTrack(index) {
-      const track = playlist[index];
-      audio.src = track.src;
-      trackTitle.textContent = track.title;
-      trackArtist.textContent = track.artist;
-      trackCover.querySelector('img').src = track.cover;
-      progressBar.style.width = '0%';
-      currentTimeEl.textContent = '00:00';
-    }
-
-    function animateEqualizer(start) {
-      if (start) {
-        pulseInterval = setInterval(() => {
-          pulseBars.forEach(bar => {
-            bar.style.height = `${Math.floor(Math.random() * 85) + 15}%`;
-          });
-        }, 120);
-      } else {
-        clearInterval(pulseInterval);
-        pulseBars.forEach(bar => bar.style.height = '20%');
-      }
-    }
-
-    function togglePlay() {
-      if (audio.paused) {
-        audio.play();
-        playIcon.classList.remove('fa-play');
-        playIcon.classList.add('fa-pause');
-        trackCover.classList.add('playing');
-        animateEqualizer(true);
-      } else {
-        audio.pause();
-        playIcon.classList.remove('fa-pause');
-        playIcon.classList.add('fa-play');
-        trackCover.classList.remove('playing');
-        animateEqualizer(false);
-      }
-    }
-
-    playBtn.addEventListener('click', togglePlay);
-
-    prevBtn.addEventListener('click', () => {
-      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-      loadTrack(currentTrackIndex);
-      audio.play();
-      playIcon.classList.remove('fa-play');
-      playIcon.classList.add('fa-pause');
-      trackCover.classList.add('playing');
-      animateEqualizer(true);
-    });
-
-    nextBtn.addEventListener('click', () => {
-      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-      loadTrack(currentTrackIndex);
-      audio.play();
-      playIcon.classList.remove('fa-play');
-      playIcon.classList.add('fa-pause');
-      trackCover.classList.add('playing');
-      animateEqualizer(true);
-    });
-
-    audio.addEventListener('timeupdate', () => {
-      if (audio.duration) {
-        const percent = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${percent}%`;
-        currentTimeEl.textContent = formatTime(audio.currentTime);
-      }
-    });
-
-    audio.addEventListener('loadedmetadata', () => {
-      totalDurationEl.textContent = formatTime(audio.duration);
-    });
-
-    audio.addEventListener('ended', () => {
-      nextBtn.click();
-    });
-
-    // Scrubber click seek
-    progressContainer.addEventListener('click', (e) => {
-      const width = progressContainer.clientWidth;
-      const clickX = e.offsetX;
-      if (audio.duration) {
-        audio.currentTime = (clickX / width) * audio.duration;
-      }
-    });
-
-    // Volume Slider & Mute
-    volumeSlider.addEventListener('input', (e) => {
-      audio.volume = e.target.value;
-      updateVolumeIcon(audio.volume);
-    });
-
-    let prevVolume = 0.8;
-    volumeIcon.addEventListener('click', () => {
-      if (audio.volume > 0) {
-        prevVolume = audio.volume;
-        audio.volume = 0;
-        volumeSlider.value = 0;
-      } else {
-        audio.volume = prevVolume;
-        volumeSlider.value = prevVolume;
-      }
-      updateVolumeIcon(audio.volume);
-    });
-
-    function updateVolumeIcon(vol) {
-      volumeIcon.className = 'fa-solid vol-icon ' + 
-        (vol == 0 ? 'fa-volume-xmark' : (vol < 0.5 ? 'fa-volume-low' : 'fa-volume-high'));
-    }
 
     // Modal Image Gallery
     function expandPhoto(element) {
