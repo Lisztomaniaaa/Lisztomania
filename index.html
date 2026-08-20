@@ -3,10 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="app-version" content="2026-08-18.1">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>Panpan — Modern Website Templates</title>
 <meta name="description" content="Modern website templates starting from Rp15K. Hosting, database, authentication and backend included.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -705,17 +701,6 @@ body.light .contact p{color:#5d6473 !important}
 <script>
 const filters=document.querySelectorAll(".filter");
 const cards=document.querySelectorAll(".card");
-const appVersion=document.querySelector('meta[name="app-version"]')?.content || "";
-
-function withAppVersion(url){
-  if(!appVersion || !url || url.startsWith("#") || /^(https?:)?\/\//.test(url)) return url;
-  const separator=url.includes("?") ? "&" : "?";
-  return `${url}${separator}v=${encodeURIComponent(appVersion)}`;
-}
-
-document.querySelectorAll('a[href$=".html"]').forEach(link=>{
-  link.href=withAppVersion(link.getAttribute("href"));
-});
 
 filters.forEach(btn=>btn.addEventListener("click",()=>{
   filters.forEach(x=>x.classList.remove("active"));
@@ -727,12 +712,12 @@ filters.forEach(btn=>btn.addEventListener("click",()=>{
 document.querySelectorAll(".card[data-href]").forEach(card=>{
   card.addEventListener("click",event=>{
     if(event.target.closest("a,button")) return;
-    window.location.href=withAppVersion(card.dataset.href);
+    window.location.href=card.dataset.href;
   });
   card.addEventListener("keydown",event=>{
     if(event.key!=="Enter"&&event.key!==" ") return;
     event.preventDefault();
-    window.location.href=withAppVersion(card.dataset.href);
+    window.location.href=card.dataset.href;
   });
 });
 
